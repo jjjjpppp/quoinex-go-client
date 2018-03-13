@@ -53,6 +53,78 @@ func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client
 
 }
 
+func (c *Client) GetOrderBook(ctx context.Context, id int) (*models.PriceLevels, error) {
+	spath := fmt.Sprintf("/products/%d/price_levels", id)
+	req, err := c.newRequest(ctx, "GET", spath, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
+	}
+
+	var priceLevels models.PriceLevels
+	if err := decodeBody(res, &priceLevels); err != nil {
+		return nil, err
+	}
+
+	return &priceLevels, nil
+}
+
+func (c *Client) GetProducts(ctx context.Context) (*[]models.Product, error) {
+	spath := fmt.Sprintf("/products")
+	req, err := c.newRequest(ctx, "GET", spath, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
+	}
+
+	var products []models.Product
+	if err := decodeBody(res, &products); err != nil {
+		return nil, err
+	}
+
+	return &products, nil
+}
+
+func (c *Client) GetProduct(ctx context.Context, productID int) (*models.Product, error) {
+	spath := fmt.Sprintf("/products/%d", productID)
+	req, err := c.newRequest(ctx, "GET", spath, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
+	}
+
+	var product models.Product
+	if err := decodeBody(res, &product); err != nil {
+		return nil, err
+	}
+
+	return &product, nil
+}
+
 func (c *Client) GetOrder(ctx context.Context, orderID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
 	req, err := c.newRequest(ctx, "GET", spath, nil)
@@ -65,8 +137,8 @@ func (c *Client) GetOrder(ctx context.Context, orderID int) (*models.Order, erro
 		return nil, err
 	}
 
-	if res.Status != "200" {
-		return nil, fmt.Errorf("faild get data. status: %s", res.Status)
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var order models.Order
