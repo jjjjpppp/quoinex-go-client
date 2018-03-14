@@ -8,14 +8,14 @@
   version = "v3.2.0"
 
 [[projects]]
-  name = "github.com/pkg/errors"
-  packages = ["."]
-  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
-  version = "v0.8.0"
+  branch = "master"
+  name = "github.com/jjjjpppp/quoinex_go_client"
+  packages = ["v2/models"]
+  revision = "f4bfe3db49a7c4a4bf3739309f6c032da657a54f"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "54975887c1dae5e95d8b80f85f20a9424f9df68713cf0e2cabedcb60505e7be8"
+  inputs-digest = "60111694da08739878725fb08f147a97b6fae8477bbd00233397dcbcf883d85d"
   solver-name = "gps-cdcl"
   solver-version = 1

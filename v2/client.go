@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/jjjjpppp/quoinex_go_client/v2/models"
+	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,6 +13,7 @@ import (
 	"net/url"
 	"path"
 	"runtime"
+	"strconv"
 	"time"
 )
 
@@ -53,9 +54,37 @@ func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client
 
 }
 
+func (c *Client) GetExecutions(ctx context.Context, productID int, limit int, page int) (*models.Executions, error) {
+	spath := fmt.Sprintf("/executions")
+	req, err := c.newRequest(ctx, "GET", spath, nil,
+		&map[string]string{
+			"product_id": strconv.Itoa(productID),
+			"limit":      strconv.Itoa(limit),
+			"page":       strconv.Itoa(page)})
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
+	}
+
+	var executions models.Executions
+	if err := decodeBody(res, &executions); err != nil {
+		return nil, err
+	}
+
+	return &executions, nil
+}
+
 func (c *Client) GetOrderBook(ctx context.Context, id int) (*models.PriceLevels, error) {
 	spath := fmt.Sprintf("/products/%d/price_levels", id)
-	req, err := c.newRequest(ctx, "GET", spath, nil)
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -79,7 +108,7 @@ func (c *Client) GetOrderBook(ctx context.Context, id int) (*models.PriceLevels,
 
 func (c *Client) GetProducts(ctx context.Context) (*[]models.Product, error) {
 	spath := fmt.Sprintf("/products")
-	req, err := c.newRequest(ctx, "GET", spath, nil)
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -103,7 +132,7 @@ func (c *Client) GetProducts(ctx context.Context) (*[]models.Product, error) {
 
 func (c *Client) GetProduct(ctx context.Context, productID int) (*models.Product, error) {
 	spath := fmt.Sprintf("/products/%d", productID)
-	req, err := c.newRequest(ctx, "GET", spath, nil)
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +156,7 @@ func (c *Client) GetProduct(ctx context.Context, productID int) (*models.Product
 
 func (c *Client) GetOrder(ctx context.Context, orderID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
-	req, err := c.newRequest(ctx, "GET", spath, nil)
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -149,9 +178,16 @@ func (c *Client) GetOrder(ctx context.Context, orderID int) (*models.Order, erro
 	return &order, nil
 }
 
-func (c *Client) newRequest(ctx context.Context, method, spath string, body io.Reader) (*http.Request, error) {
+func (c *Client) newRequest(ctx context.Context, method, spath string, body io.Reader, queryParam *map[string]string) (*http.Request, error) {
 	u := *c.URL
 	u.Path = path.Join(c.URL.Path, spath)
+	// build QueryParameter
+	q := u.Query()
+	for k, v := range *queryParam {
+		q.Set(k, v)
+	}
+	u.RawQuery = q.Encode()
+
 	userAgent := fmt.Sprintf("GoClient/%s (%s)", version, runtime.Version())
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"path":     spath,
