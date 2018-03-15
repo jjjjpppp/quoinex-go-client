@@ -1,7 +1,9 @@
 package quoinex
 
 import (
+	"context"
 	"testing"
+	"time"
 )
 
 func Test_NewClient_ApiTokenError(t *testing.T) {
@@ -32,5 +34,45 @@ func Test_NewClient_Success(t *testing.T) {
 	}
 	if c.Logger == nil {
 		t.Error("Logger is nil")
+	}
+}
+
+func Test_NewRequest_Success_No_QueryParam(t *testing.T) {
+	c, _ := NewClient("apiTokenID", "secret", nil)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	req, err := c.newRequest(ctx, "GET", "product/1", nil, nil)
+	if err != nil {
+		t.Error("Error is occered")
+	}
+	if req.Method != "GET" {
+		t.Error("Worng method")
+	}
+	if len(req.Header["X-Quoine-Auth"]) < 1 {
+		t.Error("Worng Header")
+	}
+	if req.URL.String() != "https://api.quoine.com/product/1" {
+		t.Errorf("Worng URL : %+v", req.URL.String())
+	}
+}
+
+func Test_NewRequest_Success_With_QueryParam(t *testing.T) {
+	c, _ := NewClient("apiTokenID", "secret", nil)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	queryParam := &map[string]string{"product_id": "1", "limit": "1", "page": "1"}
+	req, err := c.newRequest(ctx, "GET", "product/1", nil, queryParam)
+	if err != nil {
+		t.Error("Error is occered")
+	}
+	if req.Method != "GET" {
+		t.Error("Worng method")
+	}
+	if len(req.Header["X-Quoine-Auth"]) < 1 {
+		t.Error("Worng Header")
+	}
+	aq := req.URL.Query()
+	for k, v := range *queryParam {
+		if aq[k][0] != v {
+			t.Errorf("Worng Query Parameter k:%+v, v:%+v", k, v)
+		}
 	}
 }

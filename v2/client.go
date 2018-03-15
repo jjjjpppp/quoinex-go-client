@@ -182,11 +182,13 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	u := *c.URL
 	u.Path = path.Join(c.URL.Path, spath)
 	// build QueryParameter
-	q := u.Query()
-	for k, v := range *queryParam {
-		q.Set(k, v)
+	if queryParam != nil {
+		q := u.Query()
+		for k, v := range *queryParam {
+			q.Set(k, v)
+		}
+		u.RawQuery = q.Encode()
 	}
-	u.RawQuery = q.Encode()
 
 	userAgent := fmt.Sprintf("GoClient/%s (%s)", version, runtime.Version())
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
