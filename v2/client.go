@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"path"
 	"runtime"
@@ -28,6 +29,7 @@ type Client struct {
 	ApiSecret  string
 	HTTPClient *http.Client
 	Logger     *log.Logger
+	testServer *httptest.Server
 }
 
 func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client, error) {
@@ -154,7 +156,7 @@ func (c *Client) GetProduct(ctx context.Context, productID int) (*models.Product
 	return &product, nil
 }
 
-func (c *Client) GetOrder(ctx context.Context, orderID int) (*models.Order, error) {
+func (c *Client) GetAnOrder(ctx context.Context, orderID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
 	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
@@ -179,8 +181,16 @@ func (c *Client) GetOrder(ctx context.Context, orderID int) (*models.Order, erro
 }
 
 func (c *Client) newRequest(ctx context.Context, method, spath string, body io.Reader, queryParam *map[string]string) (*http.Request, error) {
+
+	// swith client url for unit test
+	if c.testServer != nil {
+		url, _ := url.ParseRequestURI(c.testServer.URL)
+		*c.URL = *url
+	}
+
 	u := *c.URL
 	u.Path = path.Join(c.URL.Path, spath)
+
 	// build QueryParameter
 	if queryParam != nil {
 		q := u.Query()
