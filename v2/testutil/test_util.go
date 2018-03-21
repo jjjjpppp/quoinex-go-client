@@ -232,3 +232,54 @@ func GetExpectedExecutionsModel() *models.Executions {
 	model2 := &models.ExecutionsModels{ID: 1011791, Quantity: "1.15", Price: "409.12", TakerSide: "sell", CreatedAt: 1457365585}
 	return &models.Executions{Models: []*models.ExecutionsModels{model1, model2}, CurrentPage: 2, TotalPages: 1686}
 }
+
+func GetExecutionsByTimestampJsonResponse() string {
+	return `[
+    {
+      "id": 960598,
+      "quantity": "5.6",
+      "price": "431.89",
+      "taker_side": "buy",
+      "created_at": 1456705487
+    },
+    {
+      "id": 960603,
+      "quantity": "0.06",
+      "price": "431.74",
+      "taker_side": "buy",
+      "created_at": 1456705564
+    }
+  ]`
+}
+
+func GetExpectedExecutionsByTimestampModel() []*models.ExecutionsModels {
+	model1 := &models.ExecutionsModels{ID: 960598, Quantity: "5.6", Price: "431.89", TakerSide: "buy", CreatedAt: 1456705487}
+	model2 := &models.ExecutionsModels{ID: 960603, Quantity: "0.06", Price: "431.74", TakerSide: "buy", CreatedAt: 1456705564}
+
+	return []*models.ExecutionsModels{model1, model2}
+}
+
+func GetInterestRatesJsonResponse() string {
+	return `{
+    "bids": [
+      [
+        "0.00020",
+        "23617.81698"
+      ],
+      [
+        "0.00040",
+        "50050.42000"
+      ],
+      [
+        "0.00050",
+        "100000.00000"
+      ]
+    ],
+    "asks": []
+  }`
+}
+
+func GetExpectedInterestRatesModel() *models.InterestRates {
+	bids := [][]string{{"0.00020", "23617.81698"}, {"0.00040", "50050.42000"}, {"0.00050", "100000.00000"}}
+	return &models.InterestRates{Bids: bids, Asks: []interface{}{}}
+}

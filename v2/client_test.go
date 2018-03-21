@@ -360,3 +360,102 @@ func TestGetExecutions(t *testing.T) {
 		}
 	}
 }
+
+func TestGetExecutionsByTimestamp(t *testing.T) {
+	type Param struct {
+		productID    int
+		limit        int
+		timestamp    int
+		jsonResponse string
+	}
+	type Expect struct {
+		path       string
+		executions []*models.ExecutionsModels
+	}
+
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{productID: 1, limit: 2, timestamp: 1430630863, jsonResponse: testutil.GetExecutionsByTimestampJsonResponse()},
+			expect: Expect{path: "/executions?limit=2&product_id=1&timestamp=1430630863", executions: testutil.GetExpectedExecutionsByTimestampModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		executions, err := client.GetExecutionsByTimestamp(ctx, c.param.productID, c.param.limit, c.param.timestamp)
+		if err != nil {
+			t.Errorf("Error. %+v", err)
+		}
+		if !cmp.Equal(executions, c.expect.executions) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(executions, c.expect.executions))
+		}
+	}
+}
+
+func TestGetInterestRates(t *testing.T) {
+	type Param struct {
+		currency     string
+		jsonResponse string
+	}
+	type Expect struct {
+		path string
+		a    *models.InterestRates
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{currency: "USD", jsonResponse: testutil.GetInterestRatesJsonResponse()},
+			expect: Expect{path: "/ir_ladders/USD", a: testutil.GetExpectedInterestRatesModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		r, err := client.GetInterestRates(ctx, c.param.currency)
+		if err != nil {
+			t.Errorf("Error. %+v", err)
+		}
+		if !cmp.Equal(r, c.expect.a) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(r, c.expect.a))
+		}
+	}
+}
