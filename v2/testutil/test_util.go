@@ -203,3 +203,32 @@ func GetExpectedOrderBookModel() *models.PriceLevels {
 
 	return &models.PriceLevels{BuyPriceLevels: buyPriceLevels, SellPriceLevels: sellPriceLevels}
 }
+
+func GetExecutionsJsonResponse() string {
+	return `{
+    "models": [
+      {
+        "id": 1011880,
+        "quantity": "6.118954",
+        "price": "409.78",
+        "taker_side": "sell",
+        "created_at": 1457370745
+      },
+      {
+        "id": 1011791,
+        "quantity": "1.15",
+        "price": "409.12",
+        "taker_side": "sell",
+        "created_at": 1457365585
+      }
+    ],
+    "current_page": 2,
+    "total_pages": 1686
+  }`
+}
+
+func GetExpectedExecutionsModel() *models.Executions {
+	model1 := &models.ExecutionsModels{ID: 1011880, Quantity: "6.118954", Price: "409.78", TakerSide: "sell", CreatedAt: 1457370745}
+	model2 := &models.ExecutionsModels{ID: 1011791, Quantity: "1.15", Price: "409.12", TakerSide: "sell", CreatedAt: 1457365585}
+	return &models.Executions{Models: []*models.ExecutionsModels{model1, model2}, CurrentPage: 2, TotalPages: 1686}
+}

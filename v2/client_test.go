@@ -309,3 +309,54 @@ func TestGetOrderBook(t *testing.T) {
 		}
 	}
 }
+
+func TestGetExecutions(t *testing.T) {
+	type Param struct {
+		productID    int
+		limit        int
+		page         int
+		jsonResponse string
+	}
+	type Expect struct {
+		path       string
+		executions *models.Executions
+	}
+
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{productID: 1, limit: 1, page: 1, jsonResponse: testutil.GetExecutionsJsonResponse()},
+			expect: Expect{path: "/executions?limit=1&page=1&product_id=1", executions: testutil.GetExpectedExecutionsModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		executions, err := client.GetExecutions(ctx, c.param.productID, c.param.limit, c.param.page)
+		if err != nil {
+			t.Errorf("Error. %+v", err)
+		}
+		if !cmp.Equal(executions, c.expect.executions) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(executions, c.expect.executions))
+		}
+	}
+}
