@@ -84,8 +84,8 @@ func (c *Client) GetExecutions(ctx context.Context, productID int, limit int, pa
 	return &executions, nil
 }
 
-func (c *Client) GetOrderBook(ctx context.Context, id int) (*models.PriceLevels, error) {
-	spath := fmt.Sprintf("/products/%d/price_levels", id)
+func (c *Client) GetOrderBook(ctx context.Context, productID int) (*models.PriceLevels, error) {
+	spath := fmt.Sprintf("/products/%d/price_levels", productID)
 	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (c *Client) GetOrderBook(ctx context.Context, id int) (*models.PriceLevels,
 	return &priceLevels, nil
 }
 
-func (c *Client) GetProducts(ctx context.Context) (*[]models.Product, error) {
+func (c *Client) GetProducts(ctx context.Context) ([]*models.Product, error) {
 	spath := fmt.Sprintf("/products")
 	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
@@ -124,12 +124,12 @@ func (c *Client) GetProducts(ctx context.Context) (*[]models.Product, error) {
 		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
-	var products []models.Product
+	var products []*models.Product
 	if err := decodeBody(res, &products); err != nil {
 		return nil, err
 	}
 
-	return &products, nil
+	return products, nil
 }
 
 func (c *Client) GetProduct(ctx context.Context, productID int) (*models.Product, error) {

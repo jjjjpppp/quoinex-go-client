@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/google/go-cmp/cmp"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
+	"github.com/jjjjpppp/quoinex-go-client/v2/testutil"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -129,37 +130,8 @@ func TestGetAnOrder(t *testing.T) {
 	}{
 		// test case 1
 		{
-			param: Param{orderID: 1, jsonResponse: getOrderJsonResponse()},
-			expect: Expect{path: "/orders/1", order: &models.Order{
-				ID:                   2157479,
-				OrderType:            "limit",
-				Quantity:             "0.01",
-				DiscQuantity:         "0.0",
-				IcebergTotalQuantity: "0.0",
-				Side:                 "sell",
-				FilledQuantity:       "0.01",
-				Price:                "500.0",
-				CreatedAt:            1462123639,
-				UpdatedAt:            1462123639,
-				Status:               "filled",
-				LeverageLevel:        2,
-				SourceExchange:       "QUOINE",
-				ProductID:            1,
-				ProductCode:          "CASH",
-				FundingCurrency:      "USD",
-				CurrencyPairCode:     "BTCUSD",
-				OrderFee:             "0.0",
-				Executions: models.OrderExecutions{
-					{
-						ID:        4566133,
-						Quantity:  "0.01",
-						Price:     "500.0",
-						TakerSide: "buy",
-						MySide:    "sell",
-						CreatedAt: 1465396785,
-					},
-				},
-			}},
+			param:  Param{orderID: 1, jsonResponse: testutil.GetOrderJsonResponse()},
+			expect: Expect{path: "/orders/1", order: testutil.GetExpectedOrderModel()},
 		},
 		// test case 2
 	}
@@ -190,89 +162,150 @@ func TestGetAnOrder(t *testing.T) {
 	}
 }
 
-func getOrderJsonResponse() string {
-	return `{
-  	"id": 2157479,
-  	"order_type": "limit",
-  	"quantity": "0.01",
-  	"disc_quantity": "0.0",
-  	"iceberg_total_quantity": "0.0",
-  	"side": "sell",
-  	"filled_quantity": "0.01",
-  	"price": "500.0",
-  	"created_at": 1462123639,
-  	"updated_at": 1462123639,
-  	"status": "filled",
-  	"leverage_level": 2,
-  	"source_exchange": "QUOINE",
-  	"product_id": 1,
-  	"product_code": "CASH",
-  	"funding_currency": "USD",
-  	"currency_pair_code": "BTCUSD",
-  	"order_fee": "0.0",
-  	"executions": [
-  	  {
-  	    "id": 4566133,
-  	    "quantity": "0.01",
-  	    "price": "500.0",
-  	    "taker_side": "buy",
-  	    "my_side": "sell",
-  	    "created_at": 1465396785
-  	  }
-  	]
-	}`
+func TestGetProducts(t *testing.T) {
+	type Param struct {
+		jsonResponse string
+	}
+	type Expect struct {
+		path     string
+		products []*models.Product
+	}
+
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{jsonResponse: testutil.GetProductsJsonResponse()},
+			expect: Expect{path: "/products", products: testutil.GetExpectedProductsModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != c.expect.path {
+					t.Fatalf("worng URL")
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		products, err := client.GetProducts(ctx)
+		if err != nil {
+			t.Errorf("Error. %+v", err)
+		}
+		if !cmp.Equal(products, c.expect.products) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(products, c.expect.products))
+
+		}
+
+	}
 }
 
-//func TestGetProducts(t *testing.T) {
-//	// preparing test server
-//	ts := httptest.NewServer(http.HandlerFunc(
-//		func(w http.ResponseWriter, r *http.Request) {
-//			if r.URL.Path != "/products" {
-//				t.Fatalf("worng URL")
-//			}
-//			w.Header().Set("content-Type", "text")
-//			fmt.Fprintf(w, getProductsJsonResponse())
-//			return
-//		},
-//	))
-//	defer ts.Close()
-//
-//	c, _ := NewClient("apiTokenID", "secret", nil)
-//	c.testServer = ts
-//	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-//	products, err := c.GetProducts(ctx)
-//	t.Logf("products: %v", products)
-//	if err != nil {
-//		t.Errorf("Worng err is not nil. Error: %v,", err)
-//	}
-//}
+func TestGetProduct(t *testing.T) {
+	type Param struct {
+		productID    int
+		jsonResponse string
+	}
+	type Expect struct {
+		path    string
+		product *models.Product
+	}
 
-//func getProductsJsonResponse() string {
-//	return `[
-//    {
-//        "id": 5,
-//        "product_type": "CurrencyPair",
-//        "code": "CASH",
-//        "name": "CASH Trading",
-//        "market_ask": "48203.05",
-//        "market_bid": "48188.15",
-//        "indicator": -1,
-//        "currency": "JPY",
-//        "currency_pair_code": "BTCJPY",
-//        "symbol": "¥",
-//        "fiat_minimum_withdraw": "1500.0",
-//        "pusher_channel": "product_cash_btcjpy_5",
-//        "taker_fee": "0.0",
-//        "maker_fee": "0.0",
-//        "low_market_bid": "47630.99",
-//        "high_market_ask": "48396.71",
-//        "volume_24h": "2915.627366519999999998",
-//        "last_price_24h": "48217.2",
-//        "last_traded_price": "48203.05",
-//        "last_traded_quantity": "1.0",
-//        "quoted_currency": "JPY",
-//        "base_currency": "BTC",
-//        "exchange_rate": "0.009398151671149725"
-//    },
-//  ]`
-//}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{productID: 1, jsonResponse: testutil.GetProductJsonResponse()},
+			expect: Expect{path: "/products/1", product: testutil.GetExpectedProductmodel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.Path, c.expect.path)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		product, err := client.GetProduct(ctx, c.param.productID)
+		if err != nil {
+			t.Errorf("Error. %+v", err)
+		}
+		if !cmp.Equal(product, c.expect.product) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(product, c.expect.product))
+		}
+	}
+}
+
+func TestGetOrderBook(t *testing.T) {
+	type Param struct {
+		productID    int
+		jsonResponse string
+	}
+	type Expect struct {
+		path        string
+		priceLevels *models.PriceLevels
+	}
+
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{productID: 1, jsonResponse: testutil.GetOrderBookJsonResponse()},
+			expect: Expect{path: "/products/1/price_levels", priceLevels: testutil.GetExpectedOrderBookModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.Path, c.expect.path)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		priceLevels, err := client.GetOrderBook(ctx, c.param.productID)
+		if err != nil {
+			t.Errorf("Error. %+v", err)
+		}
+		if !cmp.Equal(priceLevels, c.expect.priceLevels) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(priceLevels, c.expect.priceLevels))
+		}
+	}
+}
