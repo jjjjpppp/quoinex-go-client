@@ -15,6 +15,7 @@ import (
 	"path"
 	"runtime"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -232,6 +233,37 @@ func (c *Client) GetAnOrder(ctx context.Context, orderID int) (*models.Order, er
 	return &order, nil
 }
 
+func (c *Client) CreateAnOrder(ctx context.Context, orderType, side, quantity, price, priceRange string, productID int) (*models.Order, error) {
+	spath := fmt.Sprintf("/orders/")
+	values := url.Values{}
+	values.Add("order_type", orderType)
+	values.Add("product_id", strconv.Itoa(productID))
+	values.Add("side", side)
+	values.Add("quantity", quantity)
+	values.Add("price", price)
+	values.Add("price_range", priceRange)
+	req, err := c.newRequest(ctx, "POST", spath, strings.NewReader(values.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var order models.Order
+	if err := decodeBody(res, &order); err != nil {
+		return nil, err
+	}
+
+	return &order, nil
+}
+
 func (c *Client) newRequest(ctx context.Context, method, spath string, body io.Reader, queryParam *map[string]string) (*http.Request, error) {
 
 	// swith client url for unit test
@@ -270,8 +302,11 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	}
 
 	req = req.WithContext(ctx)
-
-	req.Header.Set("Content-Type", "application/json")
+	if method == "POST" {
+		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	} else {
+		req.Header.Set("Content-Type", "application/json")
+	}
 	req.Header.Set("X-Quoine-API-Version", "2")
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("X-Quoine-Auth", tokenString)

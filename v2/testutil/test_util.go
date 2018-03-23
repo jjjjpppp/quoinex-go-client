@@ -283,3 +283,49 @@ func GetExpectedInterestRatesModel() *models.InterestRates {
 	bids := [][]string{{"0.00020", "23617.81698"}, {"0.00040", "50050.42000"}, {"0.00050", "100000.00000"}}
 	return &models.InterestRates{Bids: bids, Asks: []interface{}{}}
 }
+
+func GetCreateAnOrderJsonResponse() string {
+	return `{
+    "id": 2157474,
+    "order_type": "limit",
+    "quantity": "0.01",
+    "disc_quantity": "0.0",
+    "iceberg_total_quantity": "0.0",
+    "side": "sell",
+    "filled_quantity": "0.0",
+    "price": "500.0",
+    "created_at": 1462123639,
+    "updated_at": 1462123639,
+    "status": "live",
+    "leverage_level": 1,
+    "source_exchange": "QUOINE",
+    "product_id": 1,
+    "product_code": "CASH",
+    "funding_currency": "USD",
+    "currency_pair_code": "BTCUSD",
+    "order_fee": "0.0"
+  }`
+}
+
+func GetExpectedCreateAnOrderModel() *models.Order {
+	return &models.Order{
+		ID:                   2157474,
+		OrderType:            "limit",
+		Quantity:             "0.01",
+		DiscQuantity:         "0.0",
+		IcebergTotalQuantity: "0.0",
+		Side:                 "sell",
+		FilledQuantity:       "0.0",
+		Price:                "500.0",
+		CreatedAt:            1462123639,
+		UpdatedAt:            1462123639,
+		Status:               "live",
+		LeverageLevel:        1,
+		SourceExchange:       "QUOINE",
+		ProductID:            1,
+		ProductCode:          "CASH",
+		FundingCurrency:      "USD",
+		CurrencyPairCode:     "BTCUSD",
+		OrderFee:             "0.0",
+	}
+}
