@@ -162,6 +162,54 @@ func TestGetAnOrder(t *testing.T) {
 	}
 }
 
+func TestGetOrders(t *testing.T) {
+	type Param struct {
+		productID       int
+		withDetails     int
+		fundingCurrency string
+		status          string
+		jsonResponse    string
+	}
+	type Expect struct {
+		path string
+		e    *models.Orders
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{productID: 1, withDetails: 1, fundingCurrency: "USD", status: "ok", jsonResponse: testutil.GetOrdersJsonResponse()},
+			expect: Expect{path: "/orders", e: testutil.GetExpectedOrdersModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path != c.expect.path {
+					t.Fatalf("worng URL")
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		r, _ := client.GetOrders(ctx, c.param.productID, c.param.withDetails, c.param.fundingCurrency, c.param.status)
+		if !cmp.Equal(r, c.expect.e) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(r, c.expect.e))
+		}
+	}
+}
+
 func TestGetProducts(t *testing.T) {
 	type Param struct {
 		jsonResponse string

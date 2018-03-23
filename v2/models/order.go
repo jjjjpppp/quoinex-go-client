@@ -1,5 +1,11 @@
 package models
 
+type Orders struct {
+	Models      []*Order `json:"models"`
+	CurrentPage int      `json:"current_page"`
+	TotalPages  int      `json:"total_pages"`
+}
+
 type Order struct {
 	ID                   int             `json:"id"`
 	OrderType            string          `json:"order_type"`
