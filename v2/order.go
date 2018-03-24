@@ -95,7 +95,7 @@ func (c *Client) CreateAnOrder(ctx context.Context, orderType, side, quantity, p
 
 func (c *Client) CancelAnOrder(ctx context.Context, orderID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d/cancel", orderID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	req, err := c.newRequest(ctx, "PUT", spath, nil, nil)
 	if err != nil {
 		return nil, err
 	}

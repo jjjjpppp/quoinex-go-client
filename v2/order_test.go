@@ -179,8 +179,9 @@ func TestCancelAnOrder(t *testing.T) {
 		jsonResponse string
 	}
 	type Expect struct {
-		path  string
-		order *models.Order
+		path   string
+		method string
+		order  *models.Order
 	}
 	cases := []struct {
 		param  Param
@@ -189,7 +190,7 @@ func TestCancelAnOrder(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{orderID: 2157474, jsonResponse: testutil.GetCancelAnOrderJsonResponse()},
-			expect: Expect{path: "/orders/2157474/cancel", order: testutil.GetExpectedCancelAnOrderModel()},
+			expect: Expect{path: "/orders/2157474/cancel", method: "PUT", order: testutil.GetExpectedCancelAnOrderModel()},
 		},
 		// test case 2
 	}
@@ -199,6 +200,9 @@ func TestCancelAnOrder(t *testing.T) {
 			func(w http.ResponseWriter, r *http.Request) {
 				if r.URL.RequestURI() != c.expect.path {
 					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				if r.Method != "PUT" {
+					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
 				}
 				// set expected json
 				w.Header().Set("content-Type", "text")
