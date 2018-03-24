@@ -223,3 +223,67 @@ func TestCancelAnOrder(t *testing.T) {
 
 	}
 }
+
+func TestEditALiveOrder(t *testing.T) {
+	type Param struct {
+		orderID      int
+		quantity     string
+		price        string
+		jsonResponse string
+	}
+	type Expect struct {
+		path   string
+		method string
+		body   string
+		order  *models.Order
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{orderID: 2157474, quantity: "0.02", price: "520.0", jsonResponse: testutil.GetEditALiveOrderJsonResponse()},
+			expect: Expect{path: "/orders/2157474", method: "PUT", body: "price=520.0&quantity=0.02", order: testutil.GetExpectedEditALiveOrderModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				// Read body
+				b, err := ioutil.ReadAll(r.Body)
+				s := string(b)
+				defer r.Body.Close()
+				if err != nil {
+					t.Errorf("Worng body. err:%+v", err)
+				}
+				if s != c.expect.body {
+					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
+				}
+				if r.Method != "PUT" {
+					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		order, _ := client.EditALiveOrder(ctx, c.param.orderID, c.param.quantity, c.param.price)
+		if !cmp.Equal(order, c.expect.order) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(order, c.expect.order))
+
+		}
+
+	}
+}

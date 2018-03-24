@@ -116,3 +116,30 @@ func (c *Client) CancelAnOrder(ctx context.Context, orderID int) (*models.Order,
 
 	return &order, nil
 }
+
+func (c *Client) EditALiveOrder(ctx context.Context, orderID int, quantity, price string) (*models.Order, error) {
+	spath := fmt.Sprintf("/orders/%d", orderID)
+	values := url.Values{}
+	values.Add("quantity", quantity)
+	values.Add("price", price)
+	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var order models.Order
+	if err := decodeBody(res, &order); err != nil {
+		return nil, err
+	}
+
+	return &order, nil
+}

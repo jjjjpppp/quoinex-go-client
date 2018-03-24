@@ -428,3 +428,47 @@ func GetExpectedCancelAnOrderModel() *models.Order {
 		CurrencyPairCode:     "BTCUSD",
 	}
 }
+
+func GetEditALiveOrderJsonResponse() string {
+	return `{
+    "id": 2157474,
+    "order_type": "limit",
+    "quantity": "0.02",
+    "disc_quantity": "0.0",
+    "iceberg_total_quantity": "0.0",
+    "side": "sell",
+    "filled_quantity": "0.0",
+    "price": "520.0",
+    "created_at": 1462123639,
+    "updated_at": 1462123639,
+    "status": "live",
+    "leverage_level": 1,
+    "source_exchange": "QUOINE",
+    "product_id": 1,
+    "product_code": "CASH",
+    "funding_currency": "USD",
+    "currency_pair_code": "BTCUSD"
+  }`
+}
+
+func GetExpectedEditALiveOrderModel() *models.Order {
+	return &models.Order{
+		ID:                   2157474,
+		OrderType:            "limit",
+		Quantity:             "0.02",
+		DiscQuantity:         "0.0",
+		IcebergTotalQuantity: "0.0",
+		Side:                 "sell",
+		FilledQuantity:       "0.0",
+		Price:                "520.0",
+		CreatedAt:            1462123639,
+		UpdatedAt:            1462123639,
+		Status:               "live",
+		LeverageLevel:        1,
+		SourceExchange:       "QUOINE",
+		ProductID:            1,
+		ProductCode:          "CASH",
+		FundingCurrency:      "USD",
+		CurrencyPairCode:     "BTCUSD",
+	}
+}
