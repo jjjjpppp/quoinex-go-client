@@ -589,3 +589,31 @@ func GetExpectedFiatAccountsModel() []*models.Account {
 	}
 	return []*models.Account{m1}
 }
+
+func GetCreateFiatAccountJsonResponse() string {
+	return `{
+    "id": 5595,
+    "currency": "USD",
+    "currency_symbol": "$",
+    "balance": "0.0",
+    "pusher_channel": "user_3122_account_usd",
+    "lowest_offer_interest_rate": "0.00020",
+    "highest_offer_interest_rate": "0.00060",
+    "exchange_rate": "1.0",
+    "currency_type": "fiat"
+  }`
+}
+
+func GetExpectedCreateFiatAccountModel() *models.Account {
+	return &models.Account{
+		ID:                       5595,
+		Currency:                 "USD",
+		CurrencySymbol:           "$",
+		Balance:                  "0.0",
+		PusherChannel:            "user_3122_account_usd",
+		LowestOfferInterestRate:  "0.00020",
+		HighestOfferInterestRate: "0.00060",
+		ExchangeRate:             "1.0",
+		CurrencyType:             "fiat",
+	}
+}
