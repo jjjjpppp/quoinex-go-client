@@ -558,3 +558,34 @@ func GetExpectedOwnExecutionsModel() *models.Executions {
 	model1 := &models.ExecutionsModels{ID: 1001232, Quantity: "0.37153179", Price: "390.0", TakerSide: "sell", MySide: "sell", CreatedAt: 1457193798}
 	return &models.Executions{Models: []*models.ExecutionsModels{model1}, CurrentPage: 1, TotalPages: 2}
 }
+
+func GetFiatAccountsJsonResponse() string {
+	return `[
+    {
+      "id": 4695,
+      "currency": "USD",
+      "currency_symbol": "$",
+      "balance": "10000.1773",
+      "pusher_channel": "user_3020_account_usd",
+      "lowest_offer_interest_rate": "0.00020",
+      "highest_offer_interest_rate": "0.00060",
+      "exchange_rate": "1.0",
+      "currency_type": "fiat"
+    }
+  ]`
+}
+
+func GetExpectedFiatAccountsModel() []*models.Account {
+	m1 := &models.Account{
+		ID:                       4695,
+		Currency:                 "USD",
+		CurrencySymbol:           "$",
+		Balance:                  "10000.1773",
+		PusherChannel:            "user_3020_account_usd",
+		LowestOfferInterestRate:  "0.00020",
+		HighestOfferInterestRate: "0.00060",
+		ExchangeRate:             "1.0",
+		CurrencyType:             "fiat",
+	}
+	return []*models.Account{m1}
+}
