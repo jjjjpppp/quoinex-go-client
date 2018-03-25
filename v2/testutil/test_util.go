@@ -536,3 +536,25 @@ func GetExpectedOrderTradesModel() []*models.Trade {
 	}
 	return []*models.Trade{m1}
 }
+
+func GetOwnExecutionsJsonResponse() string {
+	return `{
+    "models": [
+      {
+        "id": 1001232,
+        "quantity": "0.37153179",
+        "price": "390.0",
+        "taker_side": "sell",
+        "my_side": "sell",
+        "created_at": 1457193798
+      }
+    ],
+    "current_page": 1,
+    "total_pages": 2
+  }`
+}
+
+func GetExpectedOwnExecutionsModel() *models.Executions {
+	model1 := &models.ExecutionsModels{ID: 1001232, Quantity: "0.37153179", Price: "390.0", TakerSide: "sell", MySide: "sell", CreatedAt: 1457193798}
+	return &models.Executions{Models: []*models.ExecutionsModels{model1}, CurrentPage: 1, TotalPages: 2}
+}
