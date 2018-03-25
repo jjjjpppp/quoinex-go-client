@@ -650,3 +650,27 @@ func GetExpectedCryptoAccountsModel() []*models.CryptoAccount {
 	}
 	return []*models.CryptoAccount{m1}
 }
+
+func GetAllAccountBalancesJsonResponse() string {
+	return `[
+    {
+        "currency": "BTC",
+        "balance": "0.04925688"
+    },
+    {
+        "currency": "USD",
+        "balance": "7.17696"
+    },
+    {
+        "currency": "JPY",
+        "balance": "356.01377"
+    }
+  ]`
+}
+
+func GetExpectedAllAccountBalancesModel() []*models.AccountBalance {
+	m1 := &models.AccountBalance{Currency: "BTC", Balance: "0.04925688"}
+	m2 := &models.AccountBalance{Currency: "USD", Balance: "7.17696"}
+	m3 := &models.AccountBalance{Currency: "JPY", Balance: "356.01377"}
+	return []*models.AccountBalance{m1, m2, m3}
+}

@@ -81,3 +81,27 @@ func (c *Client) GetCryptoAccounts(ctx context.Context) ([]*models.CryptoAccount
 
 	return accounts, nil
 }
+
+func (c *Client) GetAllAccountBalances(ctx context.Context) ([]*models.AccountBalance, error) {
+	spath := fmt.Sprintf("/accounts/balance")
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var accountBalances []*models.AccountBalance
+	if err := decodeBody(res, &accountBalances); err != nil {
+		return nil, err
+	}
+
+	return accountBalances, nil
+}

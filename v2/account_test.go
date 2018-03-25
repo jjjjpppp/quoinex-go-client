@@ -171,3 +171,52 @@ func TestGetCryptoAccounts(t *testing.T) {
 
 	}
 }
+
+func TestGetAllAccountBalances(t *testing.T) {
+	type Param struct {
+		jsonResponse string
+	}
+	type Expect struct {
+		path            string
+		method          string
+		accountBalances []*models.AccountBalance
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{jsonResponse: testutil.GetAllAccountBalancesJsonResponse()},
+			expect: Expect{path: "/accounts/balance", method: "GET", accountBalances: testutil.GetExpectedAllAccountBalancesModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				if r.Method != c.expect.method {
+					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		accountBalances, _ := client.GetAllAccountBalances(ctx)
+		if !cmp.Equal(accountBalances, c.expect.accountBalances) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(accountBalances, c.expect.accountBalances))
+		}
+
+	}
+}
