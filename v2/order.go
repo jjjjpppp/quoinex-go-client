@@ -143,3 +143,27 @@ func (c *Client) EditALiveOrder(ctx context.Context, orderID int, quantity, pric
 
 	return &order, nil
 }
+
+func (c *Client) GetAnOrderTrades(ctx context.Context, orderID int) ([]*models.Trade, error) {
+	spath := fmt.Sprintf("/orders/%d/trades", orderID)
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var trades []*models.Trade
+	if err := decodeBody(res, &trades); err != nil {
+		return nil, err
+	}
+
+	return trades, nil
+}
