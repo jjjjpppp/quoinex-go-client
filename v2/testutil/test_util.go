@@ -617,3 +617,36 @@ func GetExpectedCreateFiatAccountModel() *models.Account {
 		CurrencyType:             "fiat",
 	}
 }
+
+func GetCryptoAccountsJsonResponse() string {
+	return `[
+    {
+      "id": 4668,
+      "balance": "4.99",
+      "address": "1F25zWAQ1BAAmppNxLV3KtK6aTNhxNg5Hg",
+      "currency": "BTC",
+      "currency_symbol": "฿",
+      "pusher_channel": "user_3020_account_btc",
+      "minimum_withdraw": 0.02,
+      "lowest_offer_interest_rate": "0.00049",
+      "highest_offer_interest_rate": "0.05000",
+      "currency_type": "crypto"
+    }
+  ]`
+}
+
+func GetExpectedCryptoAccountsModel() []*models.CryptoAccount {
+	m1 := &models.CryptoAccount{
+		ID:                       4668,
+		Balance:                  "4.99",
+		Address:                  "1F25zWAQ1BAAmppNxLV3KtK6aTNhxNg5Hg",
+		Currency:                 "BTC",
+		CurrencySymbol:           "฿",
+		PusherChannel:            "user_3020_account_btc",
+		MinimumWithdraw:          0.02,
+		LowestOfferInterestRate:  "0.00049",
+		HighestOfferInterestRate: "0.05000",
+		CurrencyType:             "crypto",
+	}
+	return []*models.CryptoAccount{m1}
+}

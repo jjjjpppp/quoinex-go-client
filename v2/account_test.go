@@ -122,3 +122,52 @@ func TestCreateAFiatAccount(t *testing.T) {
 
 	}
 }
+
+func TestGetCryptoAccounts(t *testing.T) {
+	type Param struct {
+		jsonResponse string
+	}
+	type Expect struct {
+		path     string
+		method   string
+		accounts []*models.CryptoAccount
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{jsonResponse: testutil.GetCryptoAccountsJsonResponse()},
+			expect: Expect{path: "/crypto_accounts", method: "GET", accounts: testutil.GetExpectedCryptoAccountsModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				if r.Method != c.expect.method {
+					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		accounts, _ := client.GetCryptoAccounts(ctx)
+		if !cmp.Equal(accounts, c.expect.accounts) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(accounts, c.expect.accounts))
+		}
+
+	}
+}

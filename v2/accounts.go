@@ -57,3 +57,27 @@ func (c *Client) CreateAFiatAccount(ctx context.Context, currency string) (*mode
 
 	return &account, nil
 }
+
+func (c *Client) GetCryptoAccounts(ctx context.Context) ([]*models.CryptoAccount, error) {
+	spath := fmt.Sprintf("/crypto_accounts")
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var accounts []*models.CryptoAccount
+	if err := decodeBody(res, &accounts); err != nil {
+		return nil, err
+	}
+
+	return accounts, nil
+}
