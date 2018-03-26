@@ -674,3 +674,31 @@ func GetExpectedAllAccountBalancesModel() []*models.AccountBalance {
 	m3 := &models.AccountBalance{Currency: "JPY", Balance: "356.01377"}
 	return []*models.AccountBalance{m1, m2, m3}
 }
+
+func GetCreateLoanBidJsonResponse() string {
+	return `{
+    "id": 3580,
+    "bidask_type": "limit",
+    "quantity": "50.0",
+    "currency": "USD",
+    "side": "bid",
+    "filled_quantity": "0.0",
+    "status": "live",
+    "rate": "0.0002",
+    "user_id": 3020
+  }`
+}
+
+func GetExpectedCreateLoanBidModel() *models.LoanBid {
+	return &models.LoanBid{
+		ID:             3580,
+		BidaskType:     "limit",
+		Quantity:       "50.0",
+		Currency:       "USD",
+		Side:           "bid",
+		FilledQuantity: "0.0",
+		Status:         "live",
+		Rate:           "0.0002",
+		UserID:         3020,
+	}
+}
