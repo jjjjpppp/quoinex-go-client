@@ -75,3 +75,53 @@ func TestCreateALoanBid(t *testing.T) {
 
 	}
 }
+
+func TestGetLoanBids(t *testing.T) {
+	type Param struct {
+		currency     string
+		jsonResponse string
+	}
+	type Expect struct {
+		path     string
+		method   string
+		loanBids *models.LoanBids
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{currency: "USD", jsonResponse: testutil.GetLoanBidsJsonResponse()},
+			expect: Expect{path: "/loan_bids?currency=USD", method: "GET", loanBids: testutil.GetExpectedLoanBidsModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				if r.Method != c.expect.method {
+					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		loanBids, _ := client.GetLoanBids(ctx, c.param.currency)
+		if !cmp.Equal(loanBids, c.expect.loanBids) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(loanBids, c.expect.loanBids))
+		}
+
+	}
+}

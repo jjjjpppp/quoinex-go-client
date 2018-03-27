@@ -11,3 +11,9 @@ type LoanBid struct {
 	Rate           string `json:"rate"`
 	UserID         int    `json:"user_id"`
 }
+
+type LoanBids struct {
+	Models      []*LoanBid `json:"models"`
+	CurrentPage int        `json:"current_page"`
+	TotalPages  int        `json:"total_pages"`
+}

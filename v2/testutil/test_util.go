@@ -702,3 +702,38 @@ func GetExpectedCreateLoanBidModel() *models.LoanBid {
 		UserID:         3020,
 	}
 }
+
+func GetLoanBidsJsonResponse() string {
+	return `{
+    "models": [
+      {
+        "id": 3580,
+        "bidask_type": "limit",
+        "quantity": "50.0",
+        "currency": "USD",
+        "side": "bid",
+        "filled_quantity": "0.0",
+        "status": "live",
+        "rate": "0.0007",
+        "user_id": 3020
+      }
+    ],
+    "current_page": 1,
+    "total_pages": 1
+  }`
+}
+
+func GetExpectedLoanBidsModel() *models.LoanBids {
+	m1 := &models.LoanBid{
+		ID:             3580,
+		BidaskType:     "limit",
+		Quantity:       "50.0",
+		Currency:       "USD",
+		Side:           "bid",
+		FilledQuantity: "0.0",
+		Status:         "live",
+		Rate:           "0.0007",
+		UserID:         3020,
+	}
+	return &models.LoanBids{Models: []*models.LoanBid{m1}, CurrentPage: 1, TotalPages: 1}
+}
