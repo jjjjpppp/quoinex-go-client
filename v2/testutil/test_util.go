@@ -765,3 +765,38 @@ func GetExpectedCloseLoanBidModel() *models.LoanBid {
 		UserID:         3020,
 	}
 }
+
+func GetLoansJsonResponse() string {
+	return `{
+    "models": [
+      {
+        "id": 144825,
+        "quantity": "495.1048",
+        "rate": "0.0005",
+        "created_at": 1464168246,
+        "lender_id": 312,
+        "borrower_id": 5712,
+        "status": "open",
+        "currency": "JPY",
+        "fund_reloaned": true
+      }
+    ],
+    "current_page": 1,
+    "total_pages": 1
+  }`
+}
+
+func GetExpectedLoansModel() *models.Loans {
+	m1 := &models.Loan{
+		ID:           144825,
+		Quantity:     "495.1048",
+		Rate:         "0.0005",
+		CreatedAt:    1464168246,
+		LenderID:     312,
+		BorrowerID:   5712,
+		Status:       "open",
+		Currency:     "JPY",
+		FundReloaned: true,
+	}
+	return &models.Loans{Models: []*models.Loan{m1}, CurrentPage: 1, TotalPages: 1}
+}

@@ -85,3 +85,29 @@ func (c *Client) CloseLoanBid(ctx context.Context, loanBidID int) (*models.LoanB
 
 	return &loanBid, nil
 }
+
+func (c *Client) GetLoans(ctx context.Context, currency string) (*models.Loans, error) {
+	spath := fmt.Sprintf("/loans")
+	queryParam := &map[string]string{
+		"currency": currency}
+	req, err := c.newRequest(ctx, "GET", spath, nil, queryParam)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var loans models.Loans
+	if err := decodeBody(res, &loans); err != nil {
+		return nil, err
+	}
+
+	return &loans, nil
+}
