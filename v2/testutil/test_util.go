@@ -737,3 +737,31 @@ func GetExpectedLoanBidsModel() *models.LoanBids {
 	}
 	return &models.LoanBids{Models: []*models.LoanBid{m1}, CurrentPage: 1, TotalPages: 1}
 }
+
+func GetCloseLoanBidJsonResponse() string {
+	return `{
+    "id": 3580,
+    "bidask_type": "limit",
+    "quantity": "50.0",
+    "currency": "USD",
+    "side": "bid",
+    "filled_quantity": "0.0",
+    "status": "closed",
+    "rate": "0.0007",
+    "user_id": 3020
+  }`
+}
+
+func GetExpectedCloseLoanBidModel() *models.LoanBid {
+	return &models.LoanBid{
+		ID:             3580,
+		BidaskType:     "limit",
+		Quantity:       "50.0",
+		Currency:       "USD",
+		Side:           "bid",
+		FilledQuantity: "0.0",
+		Status:         "closed",
+		Rate:           "0.0007",
+		UserID:         3020,
+	}
+}

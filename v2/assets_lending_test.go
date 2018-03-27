@@ -125,3 +125,53 @@ func TestGetLoanBids(t *testing.T) {
 
 	}
 }
+
+func TestCloseLoanBid(t *testing.T) {
+	type Param struct {
+		loanBidID    int
+		jsonResponse string
+	}
+	type Expect struct {
+		path    string
+		method  string
+		loanBid *models.LoanBid
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{loanBidID: 3580, jsonResponse: testutil.GetCloseLoanBidJsonResponse()},
+			expect: Expect{path: "/loan_bids/3580/close", method: "PUT", loanBid: testutil.GetExpectedCloseLoanBidModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				if r.Method != c.expect.method {
+					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		loanBid, _ := client.CloseLoanBid(ctx, c.param.loanBidID)
+		if !cmp.Equal(loanBid, c.expect.loanBid) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(loanBid, c.expect.loanBid))
+		}
+
+	}
+}
