@@ -225,3 +225,65 @@ func TestGetLoans(t *testing.T) {
 
 	}
 }
+
+func TestUpdateALoan(t *testing.T) {
+	type Param struct {
+		loanID       int
+		fundReloaned bool
+		jsonResponse string
+	}
+	type Expect struct {
+		path   string
+		method string
+		body   string
+		loan   *models.Loan
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{loanID: 144825, fundReloaned: false, jsonResponse: testutil.GetUpdateALoanJsonResponse()},
+			expect: Expect{path: "/loans/144825", method: "PUT", body: "fund_reloaned=false", loan: testutil.GetExpectedUpdateALoanModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				if r.Method != c.expect.method {
+					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
+				}
+				// Read body
+				b, err := ioutil.ReadAll(r.Body)
+				s := string(b)
+				defer r.Body.Close()
+				if err != nil {
+					t.Errorf("Worng body. err:%+v", err)
+				}
+				if s != c.expect.body {
+					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		loan, _ := client.UpdateALoan(ctx, c.param.loanID, c.param.fundReloaned)
+		if !cmp.Equal(loan, c.expect.loan) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(loan, c.expect.loan))
+		}
+
+	}
+}

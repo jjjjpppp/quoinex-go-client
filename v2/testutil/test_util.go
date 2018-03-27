@@ -800,3 +800,31 @@ func GetExpectedLoansModel() *models.Loans {
 	}
 	return &models.Loans{Models: []*models.Loan{m1}, CurrentPage: 1, TotalPages: 1}
 }
+
+func GetUpdateALoanJsonResponse() string {
+	return `{
+    "id": 144825,
+    "quantity": "495.1048",
+    "rate": "0.0005",
+    "created_at": 1464168246,
+    "lender_id": 312,
+    "borrower_id": 5712,
+    "status": "open",
+    "currency": "JPY",
+    "fund_reloaned": false
+  }`
+}
+
+func GetExpectedUpdateALoanModel() *models.Loan {
+	return &models.Loan{
+		ID:           144825,
+		Quantity:     "495.1048",
+		Rate:         "0.0005",
+		CreatedAt:    1464168246,
+		LenderID:     312,
+		BorrowerID:   5712,
+		Status:       "open",
+		Currency:     "JPY",
+		FundReloaned: false,
+	}
+}
