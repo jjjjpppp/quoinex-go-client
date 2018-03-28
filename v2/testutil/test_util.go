@@ -879,3 +879,99 @@ func GetExpectedTradingAccounts() []*models.TradingAccount {
 	}
 	return []*models.TradingAccount{m1}
 }
+
+func GetATradingAccountJsonResponse() string {
+	return `{
+    "id": 1759,
+    "leverage_level": 10,
+    "max_leverage_level": 10,
+    "pnl": "0.0",
+    "equity": "10000.1773",
+    "margin": "4.2302",
+    "free_margin": "9995.9471",
+    "trader_id": 4807,
+    "status": "active",
+    "product_code": "CASH",
+    "currency_pair_code": "BTCUSD",
+    "position": "0.1",
+    "balance": "10000.1773",
+    "created_at": 1421992165,
+    "updated_at": 1457242996,
+    "pusher_channel": "trading_account_1759",
+    "margin_percent": "0.1",
+    "product_id": 1,
+    "funding_currency": "USD"
+  }`
+}
+
+func GetExpectedATradingAccount() *models.TradingAccount {
+	return &models.TradingAccount{
+		ID:               1759,
+		LeverageLevel:    10,
+		MaxLeverageLevel: 10,
+		Pnl:              "0.0",
+		Equity:           "10000.1773",
+		Margin:           "4.2302",
+		FreeMargin:       "9995.9471",
+		TraderID:         4807,
+		Status:           "active",
+		ProductCode:      "CASH",
+		CurrencyPairCode: "BTCUSD",
+		Position:         "0.1",
+		Balance:          "10000.1773",
+		CreatedAt:        1421992165,
+		UpdatedAt:        1457242996,
+		PusherChannel:    "trading_account_1759",
+		MarginPercent:    "0.1",
+		ProductID:        1,
+		FundingCurrency:  "USD",
+	}
+}
+
+func GetUpdateLeverageLevelJsonResponse() string {
+	return `{
+    "id": 1759,
+    "leverage_level": 25,
+    "max_leverage_level": 25,
+    "pnl": "0.0",
+    "equity": "10000.1773",
+    "margin": "4.2302",
+    "free_margin": "9995.9471",
+    "trader_id": 4807,
+    "status": "active",
+    "product_code": "CASH",
+    "currency_pair_code": "BTCUSD",
+    "position": "0.1",
+    "balance": "10000.1773",
+    "created_at": 1421992165,
+    "updated_at": 1457242996,
+    "pusher_channel": "trading_account_1759",
+    "margin_percent": "0.1",
+    "product_id": 1,
+    "funding_currency": "USD"
+  }`
+}
+
+func GetExpectedUpdateLeverageLevel() *models.TradingAccount {
+	return &models.TradingAccount{
+		ID:               1759,
+		LeverageLevel:    25,
+		MaxLeverageLevel: 25,
+		Pnl:              "0.0",
+		Equity:           "10000.1773",
+		Margin:           "4.2302",
+		FreeMargin:       "9995.9471",
+		TraderID:         4807,
+		Status:           "active",
+		ProductCode:      "CASH",
+		CurrencyPairCode: "BTCUSD",
+		Position:         "0.1",
+		Balance:          "10000.1773",
+		CreatedAt:        1421992165,
+		UpdatedAt:        1457242996,
+		PusherChannel:    "trading_account_1759",
+		MarginPercent:    "0.1",
+		ProductID:        1,
+		FundingCurrency:  "USD",
+	}
+}
