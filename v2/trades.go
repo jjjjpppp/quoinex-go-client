@@ -87,3 +87,30 @@ func (c *Client) CloseAllTrade(ctx context.Context, side string) ([]*models.Trad
 
 	return trades, nil
 }
+
+func (c *Client) UpdateTrade(ctx context.Context, tradeID, stopLoss, takeProfit int) (*models.Trade, error) {
+	spath := fmt.Sprintf("/trades/%d", tradeID)
+	values := url.Values{}
+	values.Add("stop_loss", strconv.Itoa(stopLoss))
+	values.Add("take_profit", strconv.Itoa(takeProfit))
+	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var trade models.Trade
+	if err := decodeBody(res, &trade); err != nil {
+		return nil, err
+	}
+
+	return &trade, nil
+}
