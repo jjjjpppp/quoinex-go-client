@@ -1210,3 +1210,34 @@ func GetExpectedUpdateTradeModel() *models.Trade {
 		TotalInterest:    "0.02",
 	}
 }
+
+func GetTradesLoansJsonResponse() string {
+	return `[
+    {
+      "id": 103520,
+      "quantity": "42.302",
+      "rate": "0.0002",
+      "created_at": 1461998432,
+      "lender_id": 100,
+      "borrower_id": 3020,
+      "status": "open",
+      "currency": "USD",
+      "fund_reloaned": true
+    }
+  ]`
+}
+
+func GetExpectedTradesLoansModel() []*models.Loan {
+	m1 := &models.Loan{
+		ID:           103520,
+		Quantity:     "42.302",
+		Rate:         "0.0002",
+		CreatedAt:    1461998432,
+		LenderID:     100,
+		BorrowerID:   3020,
+		Status:       "open",
+		Currency:     "USD",
+		FundReloaned: true,
+	}
+	return []*models.Loan{m1}
+}

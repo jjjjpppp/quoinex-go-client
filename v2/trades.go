@@ -114,3 +114,27 @@ func (c *Client) UpdateTrade(ctx context.Context, tradeID, stopLoss, takeProfit 
 
 	return &trade, nil
 }
+
+func (c *Client) GetTradesLoans(ctx context.Context, tradeID int) ([]*models.Loan, error) {
+	spath := fmt.Sprintf("/trades/%d/loans", tradeID)
+	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var loans []*models.Loan
+	if err := decodeBody(res, &loans); err != nil {
+		return nil, err
+	}
+
+	return loans, nil
+}
