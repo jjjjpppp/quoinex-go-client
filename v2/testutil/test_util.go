@@ -975,3 +975,67 @@ func GetExpectedUpdateLeverageLevel() *models.TradingAccount {
 		FundingCurrency:  "USD",
 	}
 }
+
+func GetTradesJsonResponse() string {
+	return `{
+    "models": [
+      {
+        "id": 57896,
+        "currency_pair_code": "BTCUSD",
+        "status": "open",
+        "side": "short",
+        "margin_used": "0.83588",
+        "open_quantity": "0.01",
+        "close_quantity": "0.0",
+        "quantity": "0.01",
+        "leverage_level": 5,
+        "product_code": "CASH",
+        "product_id": 1,
+        "open_price": "417.65",
+        "close_price": "417.0",
+        "trader_id": 3020,
+        "open_pnl": "0.0",
+        "close_pnl": "0.0",
+        "pnl": "0.0065",
+        "stop_loss": "0.0",
+        "take_profit": "0.0",
+        "funding_currency": "USD",
+        "created_at": 1456250726,
+        "updated_at": 1456251837,
+        "total_interest": "0.02"
+      }
+    ],
+    "current_page": 1,
+    "total_pages": 1
+  }`
+}
+
+func GetExpectedTradesModel() *models.Trades {
+	m1 := &models.Trade{
+		ID:               57896,
+		CurrencyPairCode: "BTCUSD",
+		Status:           "open",
+		Side:             "short",
+		MarginUsed:       "0.83588",
+		OpenQuantity:     "0.01",
+		CloseQuantity:    "0.0",
+		Quantity:         "0.01",
+		LeverageLevel:    5,
+		ProductCode:      "CASH",
+		ProductID:        1,
+		OpenPrice:        "417.65",
+		ClosePrice:       "417.0",
+		TraderID:         3020,
+		OpenPnl:          "0.0",
+		ClosePnl:         "0.0",
+		Pnl:              "0.0065",
+		StopLoss:         "0.0",
+		TakeProfit:       "0.0",
+		FundingCurrency:  "USD",
+		CreatedAt:        1456250726,
+		UpdatedAt:        1456251837,
+		TotalInterest:    "0.02",
+	}
+
+	return &models.Trades{Models: []*models.Trade{m1}, CurrentPage: 1, TotalPages: 1}
+}
