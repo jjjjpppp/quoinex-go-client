@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
-	//"net/url"
-	//"strconv"
-	//"strings"
+	"net/url"
+	"strconv"
+	"strings"
 )
 
 func (c *Client) GetTrades(ctx context.Context, fundingCurrency, status string) (*models.Trades, error) {
@@ -34,4 +34,30 @@ func (c *Client) GetTrades(ctx context.Context, fundingCurrency, status string) 
 	}
 
 	return &trades, nil
+}
+
+func (c *Client) CloseTrade(ctx context.Context, tradeID int, closedQuantity float64) (*models.Trade, error) {
+	spath := fmt.Sprintf("/trades/%d/close", tradeID)
+	values := url.Values{}
+	values.Add("closed_quantity", strconv.FormatFloat(closedQuantity, 'f', 4, 64))
+	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var trade models.Trade
+	if err := decodeBody(res, &trade); err != nil {
+		return nil, err
+	}
+
+	return &trade, nil
 }
