@@ -61,3 +61,29 @@ func (c *Client) CloseTrade(ctx context.Context, tradeID int, closedQuantity flo
 
 	return &trade, nil
 }
+
+func (c *Client) CloseAllTrade(ctx context.Context, side string) ([]*models.Trade, error) {
+	spath := fmt.Sprintf("/trades/close_all")
+	values := url.Values{}
+	values.Add("side", side)
+	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+
+	var trades []*models.Trade
+	if err := decodeBody(res, &trades); err != nil {
+		return nil, err
+	}
+
+	return trades, nil
+}

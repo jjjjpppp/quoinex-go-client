@@ -125,3 +125,64 @@ func TestCloseTrade(t *testing.T) {
 
 	}
 }
+
+func TestCloseAllTrade(t *testing.T) {
+	type Param struct {
+		side         string
+		jsonResponse string
+	}
+	type Expect struct {
+		path   string
+		method string
+		body   string
+		trades []*models.Trade
+	}
+	cases := []struct {
+		param  Param
+		expect Expect
+	}{
+		// test case 1
+		{
+			param:  Param{side: "short", jsonResponse: testutil.GetCloseAllTradeJsonResponse()},
+			expect: Expect{path: "/trades/close_all", method: "PUT", body: "side=short", trades: testutil.GetExpectedCloseAllTradeModel()},
+		},
+		// test case 2
+	}
+	for _, c := range cases {
+		// preparing test server
+		ts := httptest.NewServer(http.HandlerFunc(
+			func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.RequestURI() != c.expect.path {
+					t.Errorf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
+				}
+				if r.Method != c.expect.method {
+					t.Errorf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
+				}
+				// Read body
+				b, err := ioutil.ReadAll(r.Body)
+				s := string(b)
+				defer r.Body.Close()
+				if err != nil {
+					t.Errorf("Worng body. err:%+v", err)
+				}
+				if s != c.expect.body {
+					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
+				}
+				// set expected json
+				w.Header().Set("content-Type", "text")
+				fmt.Fprintf(w, c.param.jsonResponse)
+				return
+			},
+		))
+		defer ts.Close()
+
+		client, _ := NewClient("apiTokenID", "secret", nil)
+		client.testServer = ts
+		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		trades, _ := client.CloseAllTrade(ctx, c.param.side)
+		if !cmp.Equal(trades, c.expect.trades) {
+			t.Errorf("Worng attribute. %+v", cmp.Diff(trades, c.expect.trades))
+		}
+
+	}
+}
