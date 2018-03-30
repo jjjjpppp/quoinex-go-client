@@ -55,7 +55,8 @@ func TestGetTrades(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		trades, _ := client.GetTrades(ctx, c.param.fundingCurrency, c.param.status)
 		if !cmp.Equal(trades, c.expect.trades) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trades, c.expect.trades))
@@ -117,7 +118,8 @@ func TestCloseTrade(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		trade, _ := client.CloseTrade(ctx, c.param.tradeID, c.param.closedQuantity)
 		if !cmp.Equal(trade, c.expect.trade) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trade, c.expect.trade))
@@ -178,7 +180,8 @@ func TestCloseAllTrade(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		trades, _ := client.CloseAllTrade(ctx, c.param.side)
 		if !cmp.Equal(trades, c.expect.trades) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trades, c.expect.trades))
@@ -241,7 +244,8 @@ func TestUpdateTrade(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		trade, _ := client.UpdateTrade(ctx, c.param.tradeID, c.param.stop_loss, c.param.take_profit)
 		if !cmp.Equal(trade, c.expect.trade) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trade, c.expect.trade))
@@ -291,7 +295,8 @@ func TestGetTradesLoans(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		loans, _ := client.GetTradesLoans(ctx, c.param.tradeID)
 		if !cmp.Equal(loans, c.expect.loans) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(loans, c.expect.loans))

@@ -53,7 +53,8 @@ func TestGetTradingAccounts(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		tradingAccounts, _ := client.GetTradingAccounts(ctx)
 		if !cmp.Equal(tradingAccounts, c.expect.tradingAccounts) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(tradingAccounts, c.expect.tradingAccounts))
@@ -103,7 +104,8 @@ func TestGetATradingAccount(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		tradingAccount, _ := client.GetATradingAccount(ctx, c.param.tradingAccountID)
 		if !cmp.Equal(tradingAccount, c.expect.tradingAccount) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(tradingAccount, c.expect.tradingAccount))
@@ -166,7 +168,8 @@ func TestUpdateLeverageLevel(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		tradingAccount, _ := client.UpdateLeverageLevel(ctx, c.param.tradingAccountID, c.param.leverageLevel)
 		if !cmp.Equal(tradingAccount, c.expect.tradingAccount) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(tradingAccount, c.expect.tradingAccount))

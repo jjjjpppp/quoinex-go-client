@@ -53,7 +53,8 @@ func TestGetFiatAccounts(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		accounts, _ := client.GetFiatAccounts(ctx)
 		if !cmp.Equal(accounts, c.expect.accounts) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(accounts, c.expect.accounts))
@@ -114,7 +115,8 @@ func TestCreateAFiatAccount(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		account, _ := client.CreateAFiatAccount(ctx, c.param.currency)
 		if !cmp.Equal(account, c.expect.account) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(account, c.expect.account))
@@ -163,7 +165,8 @@ func TestGetCryptoAccounts(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		accounts, _ := client.GetCryptoAccounts(ctx)
 		if !cmp.Equal(accounts, c.expect.accounts) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(accounts, c.expect.accounts))
@@ -212,7 +215,8 @@ func TestGetAllAccountBalances(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		accountBalances, _ := client.GetAllAccountBalances(ctx)
 		if !cmp.Equal(accountBalances, c.expect.accountBalances) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(accountBalances, c.expect.accountBalances))

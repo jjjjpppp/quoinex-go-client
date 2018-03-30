@@ -50,7 +50,8 @@ func TestGetAnOrder(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		order, _ := client.GetAnOrder(ctx, 1)
 		if !cmp.Equal(order, c.expect.order) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(order, c.expect.order))
@@ -100,7 +101,8 @@ func TestGetOrders(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		r, _ := client.GetOrders(ctx, c.param.productID, c.param.withDetails, c.param.fundingCurrency, c.param.status)
 		if !cmp.Equal(r, c.expect.e) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(r, c.expect.e))
@@ -162,7 +164,8 @@ func TestCreateAnOrder(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		r, err := client.CreateAnOrder(ctx, c.param.orderType, c.param.side, c.param.quantity, c.param.price, c.param.priceRange, c.param.productID)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -214,7 +217,8 @@ func TestCancelAnOrder(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		order, _ := client.CancelAnOrder(ctx, c.param.orderID)
 		if !cmp.Equal(order, c.expect.order) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(order, c.expect.order))
@@ -278,7 +282,8 @@ func TestEditALiveOrder(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		order, _ := client.EditALiveOrder(ctx, c.param.orderID, c.param.quantity, c.param.price)
 		if !cmp.Equal(order, c.expect.order) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(order, c.expect.order))
@@ -329,7 +334,8 @@ func TestGetAnOrderTrades(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		trades, _ := client.GetAnOrderTrades(ctx, 1)
 		if !cmp.Equal(trades, c.expect.trades) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trades, c.expect.trades))

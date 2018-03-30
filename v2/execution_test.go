@@ -52,7 +52,8 @@ func TestGetExecutions(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		executions, err := client.GetExecutions(ctx, c.param.productID, c.param.limit, c.param.page)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -103,7 +104,8 @@ func TestGetExecutionsByTimestamp(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		executions, err := client.GetExecutionsByTimestamp(ctx, c.param.productID, c.param.limit, c.param.timestamp)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -155,7 +157,8 @@ func TestGetOwnExecutions(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		executions, _ := client.GetOwnExecutions(ctx, c.param.productID)
 		if !cmp.Equal(executions, c.expect.executions) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(executions, c.expect.executions))

@@ -67,7 +67,8 @@ func TestCreateALoanBid(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		loanBid, _ := client.CreateALoanBid(ctx, c.param.quantity, c.param.currency, c.param.rate)
 		if !cmp.Equal(loanBid, c.expect.loanBid) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(loanBid, c.expect.loanBid))
@@ -117,7 +118,8 @@ func TestGetLoanBids(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		loanBids, _ := client.GetLoanBids(ctx, c.param.currency)
 		if !cmp.Equal(loanBids, c.expect.loanBids) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(loanBids, c.expect.loanBids))
@@ -167,7 +169,8 @@ func TestCloseLoanBid(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		loanBid, _ := client.CloseLoanBid(ctx, c.param.loanBidID)
 		if !cmp.Equal(loanBid, c.expect.loanBid) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(loanBid, c.expect.loanBid))
@@ -217,7 +220,8 @@ func TestGetLoans(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		loans, _ := client.GetLoans(ctx, c.param.currency)
 		if !cmp.Equal(loans, c.expect.loans) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(loans, c.expect.loans))
@@ -279,7 +283,8 @@ func TestUpdateALoan(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		loan, _ := client.UpdateALoan(ctx, c.param.loanID, c.param.fundReloaned)
 		if !cmp.Equal(loan, c.expect.loan) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(loan, c.expect.loan))

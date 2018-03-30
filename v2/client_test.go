@@ -101,7 +101,8 @@ func TestNewRequest(t *testing.T) {
 
 	for _, c := range cases {
 		client, _ := NewClient("apiTokenID", "secret", nil)
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		req, _ := client.newRequest(ctx, c.param.method, c.param.spath, nil, c.param.queryParam)
 		if req.Method != c.expect.method {
 			t.Errorf("Worng method. case: %+v", c)
@@ -152,7 +153,8 @@ func TestGetProducts(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		products, err := client.GetProducts(ctx)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -203,7 +205,8 @@ func TestGetProduct(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		product, err := client.GetProduct(ctx, c.param.productID)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -252,7 +255,8 @@ func TestGetOrderBook(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		priceLevels, err := client.GetOrderBook(ctx, c.param.productID)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
@@ -300,7 +304,8 @@ func TestGetInterestRates(t *testing.T) {
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
 		client.testServer = ts
-		ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
 		r, err := client.GetInterestRates(ctx, c.param.currency)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
