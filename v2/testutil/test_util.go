@@ -1,8 +1,43 @@
 package testutil
 
 import (
+	"fmt"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
+
+func GenerateTestServer(t *testing.T, expectPath string, expectMethod string, expectBody string, jsonResponse string) *httptest.Server {
+	return httptest.NewServer(http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.RequestURI() != expectPath {
+				t.Errorf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), expectPath)
+			}
+			if r.Method != expectMethod {
+				t.Errorf("worng Method. actual:%+v, expect:%+v", r.Method, expectMethod)
+			}
+			// Read body
+			if expectBody != "" {
+				b, err := ioutil.ReadAll(r.Body)
+				s := string(b)
+				defer r.Body.Close()
+				if err != nil {
+					t.Errorf("Worng body. err:%+v", err)
+				}
+				if s != expectBody {
+					t.Errorf("Worng body. actual: %+v, expect:%+v", s, expectBody)
+				}
+			}
+
+			// set expected json
+			w.Header().Set("content-Type", "text")
+			fmt.Fprintf(w, jsonResponse)
+			return
+		},
+	))
+}
 
 func GetOrderJsonResponse() string {
 	return `{

@@ -2,13 +2,9 @@ package quoinex
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/go-cmp/cmp"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"github.com/jjjjpppp/quoinex-go-client/v2/testutil"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -20,6 +16,7 @@ func TestGetFiatAccounts(t *testing.T) {
 	type Expect struct {
 		path     string
 		method   string
+		body     string
 		accounts []*models.Account
 	}
 	cases := []struct {
@@ -29,26 +26,13 @@ func TestGetFiatAccounts(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{jsonResponse: testutil.GetFiatAccountsJsonResponse()},
-			expect: Expect{path: "/fiat_accounts", method: "GET", accounts: testutil.GetExpectedFiatAccountsModel()},
+			expect: Expect{path: "/fiat_accounts", method: "GET", body: "", accounts: testutil.GetExpectedFiatAccountsModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -87,30 +71,7 @@ func TestCreateAFiatAccount(t *testing.T) {
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// Read body
-				b, err := ioutil.ReadAll(r.Body)
-				s := string(b)
-				defer r.Body.Close()
-				if err != nil {
-					t.Errorf("Worng body. err:%+v", err)
-				}
-				if s != c.expect.body {
-					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -132,6 +93,7 @@ func TestGetCryptoAccounts(t *testing.T) {
 	type Expect struct {
 		path     string
 		method   string
+		body     string
 		accounts []*models.CryptoAccount
 	}
 	cases := []struct {
@@ -141,26 +103,13 @@ func TestGetCryptoAccounts(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{jsonResponse: testutil.GetCryptoAccountsJsonResponse()},
-			expect: Expect{path: "/crypto_accounts", method: "GET", accounts: testutil.GetExpectedCryptoAccountsModel()},
+			expect: Expect{path: "/crypto_accounts", method: "GET", body: "", accounts: testutil.GetExpectedCryptoAccountsModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -182,6 +131,7 @@ func TestGetAllAccountBalances(t *testing.T) {
 	type Expect struct {
 		path            string
 		method          string
+		body            string
 		accountBalances []*models.AccountBalance
 	}
 	cases := []struct {
@@ -191,26 +141,13 @@ func TestGetAllAccountBalances(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{jsonResponse: testutil.GetAllAccountBalancesJsonResponse()},
-			expect: Expect{path: "/accounts/balance", method: "GET", accountBalances: testutil.GetExpectedAllAccountBalancesModel()},
+			expect: Expect{path: "/accounts/balance", method: "GET", body: "", accountBalances: testutil.GetExpectedAllAccountBalancesModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)

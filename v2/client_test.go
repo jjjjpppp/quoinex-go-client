@@ -9,7 +9,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"reflect"
 	"testing"
 	"time"
@@ -122,6 +121,8 @@ func TestGetProducts(t *testing.T) {
 	}
 	type Expect struct {
 		path     string
+		method   string
+		body     string
 		products []*models.Product
 	}
 
@@ -132,23 +133,12 @@ func TestGetProducts(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{jsonResponse: testutil.GetProductsJsonResponse()},
-			expect: Expect{path: "/products", products: testutil.GetExpectedProductsModel()},
+			expect: Expect{path: "/products", method: "GET", body: "", products: testutil.GetExpectedProductsModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
-		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != c.expect.path {
-					t.Fatalf("worng URL")
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -174,6 +164,8 @@ func TestGetProduct(t *testing.T) {
 	}
 	type Expect struct {
 		path    string
+		method  string
+		body    string
 		product *models.Product
 	}
 
@@ -184,23 +176,12 @@ func TestGetProduct(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{productID: 1, jsonResponse: testutil.GetProductJsonResponse()},
-			expect: Expect{path: "/products/1", product: testutil.GetExpectedProductmodel()},
+			expect: Expect{path: "/products/1", method: "GET", body: "", product: testutil.GetExpectedProductmodel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
-		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.Path, c.expect.path)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -224,6 +205,8 @@ func TestGetOrderBook(t *testing.T) {
 	}
 	type Expect struct {
 		path        string
+		method      string
+		body        string
 		priceLevels *models.PriceLevels
 	}
 
@@ -234,23 +217,12 @@ func TestGetOrderBook(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{productID: 1, jsonResponse: testutil.GetOrderBookJsonResponse()},
-			expect: Expect{path: "/products/1/price_levels", priceLevels: testutil.GetExpectedOrderBookModel()},
+			expect: Expect{path: "/products/1/price_levels", method: "GET", body: "", priceLevels: testutil.GetExpectedOrderBookModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
-		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.Path, c.expect.path)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -273,8 +245,10 @@ func TestGetInterestRates(t *testing.T) {
 		jsonResponse string
 	}
 	type Expect struct {
-		path string
-		a    *models.InterestRates
+		path   string
+		method string
+		body   string
+		a      *models.InterestRates
 	}
 	cases := []struct {
 		param  Param
@@ -283,23 +257,12 @@ func TestGetInterestRates(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{currency: "USD", jsonResponse: testutil.GetInterestRatesJsonResponse()},
-			expect: Expect{path: "/ir_ladders/USD", a: testutil.GetExpectedInterestRatesModel()},
+			expect: Expect{path: "/ir_ladders/USD", method: "GET", body: "", a: testutil.GetExpectedInterestRatesModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
-		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)

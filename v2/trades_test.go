@@ -2,13 +2,9 @@ package quoinex
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/go-cmp/cmp"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"github.com/jjjjpppp/quoinex-go-client/v2/testutil"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -22,6 +18,7 @@ func TestGetTrades(t *testing.T) {
 	type Expect struct {
 		path   string
 		method string
+		body   string
 		trades *models.Trades
 	}
 	cases := []struct {
@@ -31,26 +28,12 @@ func TestGetTrades(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{fundingCurrency: "USD", status: "open", jsonResponse: testutil.GetTradesJsonResponse()},
-			expect: Expect{path: "/trades?funding_currency=USD&status=open", method: "GET", trades: testutil.GetExpectedTradesModel()},
+			expect: Expect{path: "/trades?funding_currency=USD&status=open", method: "GET", body: "", trades: testutil.GetExpectedTradesModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
-		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -61,7 +44,6 @@ func TestGetTrades(t *testing.T) {
 		if !cmp.Equal(trades, c.expect.trades) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trades, c.expect.trades))
 		}
-
 	}
 }
 
@@ -90,30 +72,7 @@ func TestCloseTrade(t *testing.T) {
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Errorf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Errorf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// Read body
-				b, err := ioutil.ReadAll(r.Body)
-				s := string(b)
-				defer r.Body.Close()
-				if err != nil {
-					t.Errorf("Worng body. err:%+v", err)
-				}
-				if s != c.expect.body {
-					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -124,7 +83,6 @@ func TestCloseTrade(t *testing.T) {
 		if !cmp.Equal(trade, c.expect.trade) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trade, c.expect.trade))
 		}
-
 	}
 }
 
@@ -152,30 +110,7 @@ func TestCloseAllTrade(t *testing.T) {
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Errorf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Errorf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// Read body
-				b, err := ioutil.ReadAll(r.Body)
-				s := string(b)
-				defer r.Body.Close()
-				if err != nil {
-					t.Errorf("Worng body. err:%+v", err)
-				}
-				if s != c.expect.body {
-					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -186,7 +121,6 @@ func TestCloseAllTrade(t *testing.T) {
 		if !cmp.Equal(trades, c.expect.trades) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trades, c.expect.trades))
 		}
-
 	}
 }
 
@@ -216,30 +150,7 @@ func TestUpdateTrade(t *testing.T) {
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Errorf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Errorf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// Read body
-				b, err := ioutil.ReadAll(r.Body)
-				s := string(b)
-				defer r.Body.Close()
-				if err != nil {
-					t.Errorf("Worng body. err:%+v", err)
-				}
-				if s != c.expect.body {
-					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -250,7 +161,6 @@ func TestUpdateTrade(t *testing.T) {
 		if !cmp.Equal(trade, c.expect.trade) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(trade, c.expect.trade))
 		}
-
 	}
 }
 
@@ -262,6 +172,7 @@ func TestGetTradesLoans(t *testing.T) {
 	type Expect struct {
 		path   string
 		method string
+		body   string
 		loans  []*models.Loan
 	}
 	cases := []struct {
@@ -271,26 +182,13 @@ func TestGetTradesLoans(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{tradeID: 103520, jsonResponse: testutil.GetTradesLoansJsonResponse()},
-			expect: Expect{path: "/trades/103520/loans", method: "GET", loans: testutil.GetExpectedTradesLoansModel()},
+			expect: Expect{path: "/trades/103520/loans", method: "GET", body: "", loans: testutil.GetExpectedTradesLoansModel()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Errorf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Errorf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -301,6 +199,5 @@ func TestGetTradesLoans(t *testing.T) {
 		if !cmp.Equal(loans, c.expect.loans) {
 			t.Errorf("Worng attribute. %+v", cmp.Diff(loans, c.expect.loans))
 		}
-
 	}
 }

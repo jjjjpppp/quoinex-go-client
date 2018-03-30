@@ -2,13 +2,9 @@ package quoinex
 
 import (
 	"context"
-	"fmt"
 	"github.com/google/go-cmp/cmp"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"github.com/jjjjpppp/quoinex-go-client/v2/testutil"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
 	"testing"
 	"time"
 )
@@ -20,6 +16,7 @@ func TestGetTradingAccounts(t *testing.T) {
 	type Expect struct {
 		path            string
 		method          string
+		body            string
 		tradingAccounts []*models.TradingAccount
 	}
 	cases := []struct {
@@ -29,26 +26,13 @@ func TestGetTradingAccounts(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{jsonResponse: testutil.GetTradingAccountsJsonResponse()},
-			expect: Expect{path: "/trading_accounts", method: "GET", tradingAccounts: testutil.GetExpectedTradingAccounts()},
+			expect: Expect{path: "/trading_accounts", method: "GET", body: "", tradingAccounts: testutil.GetExpectedTradingAccounts()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -71,6 +55,7 @@ func TestGetATradingAccount(t *testing.T) {
 	type Expect struct {
 		path           string
 		method         string
+		body           string
 		tradingAccount *models.TradingAccount
 	}
 	cases := []struct {
@@ -80,26 +65,13 @@ func TestGetATradingAccount(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{tradingAccountID: 1759, jsonResponse: testutil.GetATradingAccountJsonResponse()},
-			expect: Expect{path: "/trading_accounts/1759", method: "GET", tradingAccount: testutil.GetExpectedATradingAccount()},
+			expect: Expect{path: "/trading_accounts/1759", method: "GET", body: "", tradingAccount: testutil.GetExpectedATradingAccount()},
 		},
 		// test case 2
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
@@ -139,31 +111,7 @@ func TestUpdateLeverageLevel(t *testing.T) {
 	}
 	for _, c := range cases {
 		// preparing test server
-		ts := httptest.NewServer(http.HandlerFunc(
-			func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.RequestURI() != c.expect.path {
-					t.Fatalf("worng URL. actual:%+v, expect:%+v", r.URL.RequestURI(), c.expect.path)
-				}
-				if r.Method != c.expect.method {
-					t.Fatalf("worng Method. actual:%+v, expect:%+v", r.Method, c.expect.method)
-				}
-				// Read body
-				b, err := ioutil.ReadAll(r.Body)
-				s := string(b)
-				defer r.Body.Close()
-				if err != nil {
-					t.Errorf("Worng body. err:%+v", err)
-				}
-				if s != c.expect.body {
-					t.Errorf("Worng body. actual: %+v, expect:%+v", s, c.expect.body)
-				}
-
-				// set expected json
-				w.Header().Set("content-Type", "text")
-				fmt.Fprintf(w, c.param.jsonResponse)
-				return
-			},
-		))
+		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
 		defer ts.Close()
 
 		client, _ := NewClient("apiTokenID", "secret", nil)
