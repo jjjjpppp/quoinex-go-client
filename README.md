@@ -1,6 +1,6 @@
-# go-pagerduty
+# quoinex-go-client
 
-quoinx-go-client is a [go](https://golang.org/) client library for [Quoine v2 API](https://developers.quoine.com/).
+quoinex-go-client is a [go](https://golang.org/) client library for [Quoine v2 API](https://developers.quoine.com/).
 [godoc]()
 
 ## Installation
@@ -15,13 +15,13 @@ go get github.com/jjjjpppp/quoinex-go-client
 package main
 
 import (
-	"fmt"
-	"github.com/jjjjpppp/quoinex-go-client"
+ "fmt"
+ "github.com/jjjjpppp/quoinex-go-client"
 )
 
 
 func main() {
-	client, _ := NewClient("apiTokenID", "secret", nil) // your token and secret setup here
+  client, _ := NewClient("apiTokenID", "secret", nil) // your token and secret setup here
   ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
   priceLevels, err := client.GetOrderBook(ctx,[productID])
 
