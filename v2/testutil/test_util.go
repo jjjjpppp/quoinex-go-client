@@ -1,6 +1,7 @@
 package testutil
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"io/ioutil"
@@ -233,8 +234,8 @@ func GetOrderBookJsonResponse() string {
 }
 
 func GetExpectedOrderBookModel() *models.PriceLevels {
-	buyPriceLevels := [][]string{{"416.23000", "1.75000"}, {"0", "0"}}
-	sellPriceLevels := [][]string{{"416.47000", "0.28675"}, {"1", "1"}}
+	buyPriceLevels := [][]json.Number{{"416.23000", "1.75000"}, {"0", "0"}}
+	sellPriceLevels := [][]json.Number{{"416.47000", "0.28675"}, {"1", "1"}}
 
 	return &models.PriceLevels{BuyPriceLevels: buyPriceLevels, SellPriceLevels: sellPriceLevels}
 }
