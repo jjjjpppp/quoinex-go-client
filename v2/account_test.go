@@ -65,7 +65,7 @@ func TestCreateAFiatAccount(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{currency: "USD", jsonResponse: testutil.GetCreateFiatAccountJsonResponse()},
-			expect: Expect{path: "/fiat_accounts", method: "POST", body: "currency=USD", account: testutil.GetExpectedCreateFiatAccountModel()},
+			expect: Expect{path: "/fiat_accounts", method: "POST", body: "{\"currency\":\"USD\"}", account: testutil.GetExpectedCreateFiatAccountModel()},
 		},
 		// test case 2
 	}

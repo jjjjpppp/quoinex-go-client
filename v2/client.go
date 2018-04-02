@@ -189,11 +189,7 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	}
 
 	req = req.WithContext(ctx)
-	if method == "POST" {
-		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	} else {
-		req.Header.Set("Content-Type", "application/json")
-	}
+	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("X-Quoine-API-Version", "2")
 	req.Header.Set("User-Agent", userAgent)
 	req.Header.Set("X-Quoine-Auth", tokenString)
@@ -205,4 +201,12 @@ func decodeBody(resp *http.Response, out interface{}) error {
 	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
 	return decoder.Decode(out)
+}
+
+func responseBodyToString(resp *http.Response) string {
+	b, err := ioutil.ReadAll(resp.Body)
+	if err == nil {
+		return string(b)
+	}
+	return ""
 }

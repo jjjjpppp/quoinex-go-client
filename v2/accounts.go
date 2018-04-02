@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
-	"net/url"
 	"strings"
 )
 
@@ -33,20 +32,22 @@ func (c *Client) GetFiatAccounts(ctx context.Context) ([]*models.Account, error)
 }
 
 func (c *Client) CreateAFiatAccount(ctx context.Context, currency string) (*models.Account, error) {
-	spath := fmt.Sprintf("/fiat_accounts/")
-	values := url.Values{}
-	values.Add("currency", currency)
-	req, err := c.newRequest(ctx, "POST", spath, strings.NewReader(values.Encode()), nil)
+	spath := fmt.Sprintf("/fiat_accounts")
+	body := fmt.Sprintf("{\"currency\":\"%s\"}", currency)
+	req, err := c.newRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
+		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
 		return nil, err
 	}
 
 	if res.StatusCode != 200 {
+		c.Logger.Printf("res: %#v \nbody: %s \n", res, responseBodyToString(res))
 		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
@@ -62,15 +63,18 @@ func (c *Client) GetCryptoAccounts(ctx context.Context) ([]*models.CryptoAccount
 	spath := fmt.Sprintf("/crypto_accounts")
 	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
+		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
 		return nil, err
 	}
 
 	if res.StatusCode != 200 {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
 		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
@@ -86,15 +90,18 @@ func (c *Client) GetAllAccountBalances(ctx context.Context) ([]*models.AccountBa
 	spath := fmt.Sprintf("/accounts/balance")
 	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
+		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
 		return nil, err
 	}
 
 	if res.StatusCode != 200 {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
 		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
