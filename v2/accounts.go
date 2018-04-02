@@ -11,15 +11,18 @@ func (c *Client) GetFiatAccounts(ctx context.Context) ([]*models.Account, error)
 	spath := fmt.Sprintf("/fiat_accounts")
 	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
+		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
 	}
 
 	res, err := c.HTTPClient.Do(req)
 	if err != nil {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
 		return nil, err
 	}
 
 	if res.StatusCode != 200 {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
 		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
