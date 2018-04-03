@@ -13,7 +13,6 @@ import (
 	"net/http/httptest"
 	"net/http/httputil"
 	"net/url"
-	"path"
 	"runtime"
 	"time"
 )
@@ -125,7 +124,9 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	}
 
 	u := *c.URL
-	u.Path = path.Join(c.URL.Path, spath)
+	// can't use path.Join in case of end with slash ex: http://quoinex/orders/
+	// u.Path = path.Join(c.URL.Path, spath)
+	u.Path = c.URL.Path + spath
 
 	// build QueryParameter
 	if queryParam != nil {
