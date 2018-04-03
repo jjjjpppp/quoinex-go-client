@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/http/httputil"
 	"net/url"
 	"path"
 	"runtime"
@@ -163,19 +164,21 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 
 func (c *Client) sendRequest(ctx context.Context, method, spath string, body io.Reader, queryParam *map[string]string) (*http.Response, error) {
 	req, err := c.newRequest(ctx, method, spath, body, queryParam)
+	c.Logger.Printf("Request:  %s \n", httpRequestLog(req))
 	if err != nil {
-		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
+		c.Logger.Printf("err: %#v \n", err)
 		return nil, err
 	}
 
 	res, err := c.HTTPClient.Do(req)
+	c.Logger.Printf("Response: %s \n", httpResponseLog(res))
 	if err != nil {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
+		c.Logger.Printf("err: %#v \n", err)
 		return nil, err
 	}
 
 	if res.StatusCode != 200 {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
+		c.Logger.Printf("err: %#v \n", err)
 		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 	return res, nil
@@ -187,10 +190,11 @@ func decodeBody(resp *http.Response, out interface{}) error {
 	return decoder.Decode(out)
 }
 
-func responseBodyToString(resp *http.Response) string {
-	b, err := ioutil.ReadAll(resp.Body)
-	if err == nil {
-		return string(b)
-	}
-	return ""
+func httpResponseLog(resp *http.Response) string {
+	b, _ := httputil.DumpResponse(resp, true)
+	return string(b)
+}
+func httpRequestLog(req *http.Request) string {
+	b, _ := httputil.DumpRequest(req, true)
+	return string(b)
 }
