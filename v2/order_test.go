@@ -111,7 +111,7 @@ func TestCreateAnOrder(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{orderType: "limit", productID: 1, side: "sell", quantity: "0.01", price: "500.0", priceRange: "", jsonResponse: testutil.GetCreateAnOrderJsonResponse()},
-			expect: Expect{path: "/orders", body: testutil.GetExpectedCreateAnOrderRequestBody(), method: "POST", a: testutil.GetExpectedCreateAnOrderModel()},
+			expect: Expect{path: "/orders/", body: testutil.GetExpectedCreateAnOrderRequestBody(), method: "POST", a: testutil.GetExpectedCreateAnOrderModel()},
 		},
 		// test case 2
 	}
