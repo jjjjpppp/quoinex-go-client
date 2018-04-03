@@ -57,18 +57,9 @@ func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client
 
 func (c *Client) GetInterestRates(ctx context.Context, currency string) (*models.InterestRates, error) {
 	spath := fmt.Sprintf("/ir_ladders/%s", currency)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var interestRates models.InterestRates
@@ -81,18 +72,9 @@ func (c *Client) GetInterestRates(ctx context.Context, currency string) (*models
 
 func (c *Client) GetOrderBook(ctx context.Context, productID int) (*models.PriceLevels, error) {
 	spath := fmt.Sprintf("/products/%d/price_levels", productID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var priceLevels models.PriceLevels
@@ -105,18 +87,9 @@ func (c *Client) GetOrderBook(ctx context.Context, productID int) (*models.Price
 
 func (c *Client) GetProducts(ctx context.Context) ([]*models.Product, error) {
 	spath := fmt.Sprintf("/products")
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var products []*models.Product
@@ -129,18 +102,9 @@ func (c *Client) GetProducts(ctx context.Context) ([]*models.Product, error) {
 
 func (c *Client) GetProduct(ctx context.Context, productID int) (*models.Product, error) {
 	spath := fmt.Sprintf("/products/%d", productID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var product models.Product
@@ -195,6 +159,26 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	req.Header.Set("X-Quoine-Auth", tokenString)
 
 	return req, nil
+}
+
+func (c *Client) sendRequest(ctx context.Context, method, spath string, body io.Reader, queryParam *map[string]string) (*http.Response, error) {
+	req, err := c.newRequest(ctx, method, spath, body, queryParam)
+	if err != nil {
+		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	if err != nil {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+	return res, nil
 }
 
 func decodeBody(resp *http.Response, out interface{}) error {

@@ -343,6 +343,19 @@ func GetCreateAnOrderJsonResponse() string {
   }`
 }
 
+func GetExpectedCreateAnOrderRequestBody() string {
+	return `{
+			"order": {
+				"order_type":"limit",
+				"product_id":1,
+				"side":"sell",
+				"quantity":"0.01",
+				"price":"500.0",
+				"price_range":""
+			}
+		}`
+}
+
 func GetExpectedCreateAnOrderModel() *models.Order {
 	return &models.Order{
 		ID:                   2157474,

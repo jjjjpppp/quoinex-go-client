@@ -9,21 +9,9 @@ import (
 
 func (c *Client) GetFiatAccounts(ctx context.Context) ([]*models.Account, error) {
 	spath := fmt.Sprintf("/fiat_accounts")
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
-		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var accounts []*models.Account
@@ -37,21 +25,9 @@ func (c *Client) GetFiatAccounts(ctx context.Context) ([]*models.Account, error)
 func (c *Client) CreateAFiatAccount(ctx context.Context, currency string) (*models.Account, error) {
 	spath := fmt.Sprintf("/fiat_accounts")
 	body := fmt.Sprintf("{\"currency\":\"%s\"}", currency)
-	req, err := c.newRequest(ctx, "POST", spath, strings.NewReader(body), nil)
+	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
-		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		c.Logger.Printf("res: %#v \nbody: %s \n", res, responseBodyToString(res))
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var account models.Account
@@ -64,21 +40,9 @@ func (c *Client) CreateAFiatAccount(ctx context.Context, currency string) (*mode
 
 func (c *Client) GetCryptoAccounts(ctx context.Context) ([]*models.CryptoAccount, error) {
 	spath := fmt.Sprintf("/crypto_accounts")
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
-		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var accounts []*models.CryptoAccount
@@ -91,21 +55,9 @@ func (c *Client) GetCryptoAccounts(ctx context.Context) ([]*models.CryptoAccount
 
 func (c *Client) GetAllAccountBalances(ctx context.Context) ([]*models.AccountBalance, error) {
 	spath := fmt.Sprintf("/accounts/balance")
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
-		c.Logger.Printf("req: %#v \nerr: %#v \n", req, err)
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		c.Logger.Printf("res: %#v \nerr: %#v \n", res, err)
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var accountBalances []*models.AccountBalance
