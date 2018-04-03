@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
-	"net/url"
-	"strconv"
 	"strings"
 )
 
@@ -14,18 +12,9 @@ func (c *Client) GetTrades(ctx context.Context, fundingCurrency, status string) 
 	queryParam := &map[string]string{
 		"funding_currency": fundingCurrency,
 		"status":           status}
-	req, err := c.newRequest(ctx, "GET", spath, nil, queryParam)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var trades models.Trades
@@ -38,20 +27,11 @@ func (c *Client) GetTrades(ctx context.Context, fundingCurrency, status string) 
 
 func (c *Client) CloseTrade(ctx context.Context, tradeID int, closedQuantity float64) (*models.Trade, error) {
 	spath := fmt.Sprintf("/trades/%d/close", tradeID)
-	values := url.Values{}
-	values.Add("closed_quantity", strconv.FormatFloat(closedQuantity, 'f', 4, 64))
-	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	bodyTemplate := `{"closed_quantity":%f}`
+	body := fmt.Sprintf(bodyTemplate, closedQuantity)
+	res, err := c.sendRequest(ctx, "PUT", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var trade models.Trade
@@ -64,20 +44,11 @@ func (c *Client) CloseTrade(ctx context.Context, tradeID int, closedQuantity flo
 
 func (c *Client) CloseAllTrade(ctx context.Context, side string) ([]*models.Trade, error) {
 	spath := fmt.Sprintf("/trades/close_all")
-	values := url.Values{}
-	values.Add("side", side)
-	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	bodyTemplate := `{"side":"%s"}`
+	body := fmt.Sprintf(bodyTemplate, side)
+	res, err := c.sendRequest(ctx, "PUT", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var trades []*models.Trade
@@ -90,21 +61,17 @@ func (c *Client) CloseAllTrade(ctx context.Context, side string) ([]*models.Trad
 
 func (c *Client) UpdateTrade(ctx context.Context, tradeID, stopLoss, takeProfit int) (*models.Trade, error) {
 	spath := fmt.Sprintf("/trades/%d", tradeID)
-	values := url.Values{}
-	values.Add("stop_loss", strconv.Itoa(stopLoss))
-	values.Add("take_profit", strconv.Itoa(takeProfit))
-	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	bodyTemplate :=
+		`{
+			"trade": {
+				"stop_loss":"%d",
+				"take_profit":"%d"
+			}
+		}`
+	body := fmt.Sprintf(bodyTemplate, stopLoss, takeProfit)
+	res, err := c.sendRequest(ctx, "PUT", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var trade models.Trade
@@ -117,18 +84,9 @@ func (c *Client) UpdateTrade(ctx context.Context, tradeID, stopLoss, takeProfit 
 
 func (c *Client) GetTradesLoans(ctx context.Context, tradeID int) ([]*models.Loan, error) {
 	spath := fmt.Sprintf("/trades/%d/loans", tradeID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var loans []*models.Loan

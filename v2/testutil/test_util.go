@@ -1152,6 +1152,10 @@ func GetCloseTradeJsonResponse() string {
   }`
 }
 
+func GetExpectedCloseTradeRequestBody() string {
+	return `{"closed_quantity":0.000100}`
+}
+
 func GetExpectedCloseTradeModel() *models.Trade {
 	return &models.Trade{
 		ID:               57896,
@@ -1265,6 +1269,15 @@ func GetUpdateTradeJsonResponse() string {
     "updated_at": 1456251837,
     "total_interest": "0.02"
   }`
+}
+
+func GetExpectedUpdateTradeRequestBody() string {
+	return `{
+			"trade": {
+				"stop_loss":"300",
+				"take_profit":"600"
+			}
+		}`
 }
 
 func GetExpectedUpdateTradeModel() *models.Trade {

@@ -66,7 +66,7 @@ func TestCloseTrade(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{tradeID: 57896, closedQuantity: 0.0001, jsonResponse: testutil.GetCloseTradeJsonResponse()},
-			expect: Expect{path: "/trades/57896/close", method: "PUT", body: "closed_quantity=0.0001", trade: testutil.GetExpectedCloseTradeModel()},
+			expect: Expect{path: "/trades/57896/close", method: "PUT", body: testutil.GetExpectedCloseTradeRequestBody(), trade: testutil.GetExpectedCloseTradeModel()},
 		},
 		// test case 2
 	}
@@ -104,7 +104,7 @@ func TestCloseAllTrade(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{side: "short", jsonResponse: testutil.GetCloseAllTradeJsonResponse()},
-			expect: Expect{path: "/trades/close_all", method: "PUT", body: "side=short", trades: testutil.GetExpectedCloseAllTradeModel()},
+			expect: Expect{path: "/trades/close_all", method: "PUT", body: `{"side":"short"}`, trades: testutil.GetExpectedCloseAllTradeModel()},
 		},
 		// test case 2
 	}
@@ -144,7 +144,7 @@ func TestUpdateTrade(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{tradeID: 57897, stop_loss: 300, take_profit: 600, jsonResponse: testutil.GetUpdateTradeJsonResponse()},
-			expect: Expect{path: "/trades/57897", method: "PUT", body: "stop_loss=300&take_profit=600", trade: testutil.GetExpectedUpdateTradeModel()},
+			expect: Expect{path: "/trades/57897", method: "PUT", body: testutil.GetExpectedUpdateTradeRequestBody(), trade: testutil.GetExpectedUpdateTradeModel()},
 		},
 		// test case 2
 	}
