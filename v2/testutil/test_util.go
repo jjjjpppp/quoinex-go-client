@@ -500,6 +500,15 @@ func GetEditALiveOrderJsonResponse() string {
   }`
 }
 
+func GetExpectedEditALiveOrderRequestBody() string {
+	return `{
+			"order": {
+				"quantity":"0.02",
+				"price":"520.0",
+			}
+		}`
+}
+
 func GetExpectedEditALiveOrderModel() *models.Order {
 	return &models.Order{
 		ID:                   2157474,
@@ -738,6 +747,16 @@ func GetCreateLoanBidJsonResponse() string {
   }`
 }
 
+func GetExpectedCreateALoanBidRequestBody() string {
+	return `{
+			"loan_bid": {
+				"quantity":"50",
+				"currency":"USD",
+				"rate":"0.0002"
+			}
+		}`
+}
+
 func GetExpectedCreateLoanBidModel() *models.LoanBid {
 	return &models.LoanBid{
 		ID:             3580,
@@ -862,6 +881,14 @@ func GetUpdateALoanJsonResponse() string {
     "currency": "JPY",
     "fund_reloaned": false
   }`
+}
+
+func GetExpectedUpdateLoanBidRequestBody() string {
+	return `{
+			"loan": {
+				"fund_reloaned":false
+			}
+		}`
 }
 
 func GetExpectedUpdateALoanModel() *models.Loan {

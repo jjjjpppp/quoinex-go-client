@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
-	"net/url"
 	"strconv"
 	"strings"
 )
@@ -88,10 +87,15 @@ func (c *Client) CancelAnOrder(ctx context.Context, orderID int) (*models.Order,
 
 func (c *Client) EditALiveOrder(ctx context.Context, orderID int, quantity, price string) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
-	values := url.Values{}
-	values.Add("quantity", quantity)
-	values.Add("price", price)
-	res, err := c.sendRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	bodyTemplate :=
+		`{
+			"order": {
+				"quantity":"%s",
+				"price":"%s",
+			}
+		}`
+	body := fmt.Sprintf(bodyTemplate, quantity, price)
+	res, err := c.sendRequest(ctx, "PUT", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
 	}
