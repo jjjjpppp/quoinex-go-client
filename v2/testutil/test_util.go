@@ -1028,6 +1028,14 @@ func GetUpdateLeverageLevelJsonResponse() string {
   }`
 }
 
+func GetExpectedUpdateLeverageLevelRequestBody() string {
+	return `{
+			"trading_account": {
+				"leverage_level":25
+			}
+		}`
+}
+
 func GetExpectedUpdateLeverageLevel() *models.TradingAccount {
 	return &models.TradingAccount{
 		ID:               1759,

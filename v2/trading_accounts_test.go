@@ -105,7 +105,7 @@ func TestUpdateLeverageLevel(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{tradingAccountID: 1759, leverageLevel: 25, jsonResponse: testutil.GetUpdateLeverageLevelJsonResponse()},
-			expect: Expect{path: "/trading_accounts/1759", body: "leverage_level=25", method: "PUT", tradingAccount: testutil.GetExpectedUpdateLeverageLevel()},
+			expect: Expect{path: "/trading_accounts/1759", body: testutil.GetExpectedUpdateLeverageLevelRequestBody(), method: "PUT", tradingAccount: testutil.GetExpectedUpdateLeverageLevel()},
 		},
 		// test case 2
 	}
