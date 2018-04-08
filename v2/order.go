@@ -4,25 +4,15 @@ import (
 	"context"
 	"fmt"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
-	"net/url"
 	"strconv"
 	"strings"
 )
 
 func (c *Client) GetAnOrder(ctx context.Context, orderID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var order models.Order
@@ -40,18 +30,9 @@ func (c *Client) GetOrders(ctx context.Context, productID, withDetails int, fund
 		"with_details":     strconv.Itoa(withDetails),
 		"status":           status,
 		"funding_currency": fundingCurrency}
-	req, err := c.newRequest(ctx, "GET", spath, nil, queryParam)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var orders models.Orders
@@ -64,25 +45,21 @@ func (c *Client) GetOrders(ctx context.Context, productID, withDetails int, fund
 
 func (c *Client) CreateAnOrder(ctx context.Context, orderType, side, quantity, price, priceRange string, productID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/")
-	values := url.Values{}
-	values.Add("order_type", orderType)
-	values.Add("product_id", strconv.Itoa(productID))
-	values.Add("side", side)
-	values.Add("quantity", quantity)
-	values.Add("price", price)
-	values.Add("price_range", priceRange)
-	req, err := c.newRequest(ctx, "POST", spath, strings.NewReader(values.Encode()), nil)
+	bodyTemplate :=
+		`{
+			"order": {
+				"order_type":"%s",
+				"product_id":%d,
+				"side":"%s",
+				"quantity":"%s",
+				"price":"%s",
+				"price_range":"%s"
+			}
+		}`
+	body := fmt.Sprintf(bodyTemplate, orderType, productID, side, quantity, price, priceRange)
+	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var order models.Order
@@ -95,18 +72,9 @@ func (c *Client) CreateAnOrder(ctx context.Context, orderType, side, quantity, p
 
 func (c *Client) CancelAnOrder(ctx context.Context, orderID int) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d/cancel", orderID)
-	req, err := c.newRequest(ctx, "PUT", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "PUT", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var order models.Order
@@ -119,21 +87,17 @@ func (c *Client) CancelAnOrder(ctx context.Context, orderID int) (*models.Order,
 
 func (c *Client) EditALiveOrder(ctx context.Context, orderID int, quantity, price string) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
-	values := url.Values{}
-	values.Add("quantity", quantity)
-	values.Add("price", price)
-	req, err := c.newRequest(ctx, "PUT", spath, strings.NewReader(values.Encode()), nil)
+	bodyTemplate :=
+		`{
+			"order": {
+				"quantity":"%s",
+				"price":"%s",
+			}
+		}`
+	body := fmt.Sprintf(bodyTemplate, quantity, price)
+	res, err := c.sendRequest(ctx, "PUT", spath, strings.NewReader(body), nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var order models.Order
@@ -146,18 +110,9 @@ func (c *Client) EditALiveOrder(ctx context.Context, orderID int, quantity, pric
 
 func (c *Client) GetAnOrderTrades(ctx context.Context, orderID int) ([]*models.Trade, error) {
 	spath := fmt.Sprintf("/orders/%d/trades", orderID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
 	}
 
 	var trades []*models.Trade

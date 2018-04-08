@@ -11,8 +11,8 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/http/httputil"
 	"net/url"
-	"path"
 	"runtime"
 	"time"
 )
@@ -57,18 +57,9 @@ func NewClient(apiTokenID string, apiSecret string, logger *log.Logger) (*Client
 
 func (c *Client) GetInterestRates(ctx context.Context, currency string) (*models.InterestRates, error) {
 	spath := fmt.Sprintf("/ir_ladders/%s", currency)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var interestRates models.InterestRates
@@ -81,18 +72,9 @@ func (c *Client) GetInterestRates(ctx context.Context, currency string) (*models
 
 func (c *Client) GetOrderBook(ctx context.Context, productID int) (*models.PriceLevels, error) {
 	spath := fmt.Sprintf("/products/%d/price_levels", productID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var priceLevels models.PriceLevels
@@ -105,18 +87,9 @@ func (c *Client) GetOrderBook(ctx context.Context, productID int) (*models.Price
 
 func (c *Client) GetProducts(ctx context.Context) ([]*models.Product, error) {
 	spath := fmt.Sprintf("/products")
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var products []*models.Product
@@ -129,18 +102,9 @@ func (c *Client) GetProducts(ctx context.Context) ([]*models.Product, error) {
 
 func (c *Client) GetProduct(ctx context.Context, productID int) (*models.Product, error) {
 	spath := fmt.Sprintf("/products/%d", productID)
-	req, err := c.newRequest(ctx, "GET", spath, nil, nil)
+	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
-	}
-
-	res, err := c.HTTPClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	if res.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to get data. status: %s", res.Status)
 	}
 
 	var product models.Product
@@ -160,7 +124,9 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	}
 
 	u := *c.URL
-	u.Path = path.Join(c.URL.Path, spath)
+	// can't use path.Join in case of end with slash ex: http://quoinex/orders/
+	// u.Path = path.Join(c.URL.Path, spath)
+	u.Path = c.URL.Path + spath
 
 	// build QueryParameter
 	if queryParam != nil {
@@ -197,16 +163,39 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	return req, nil
 }
 
+func (c *Client) sendRequest(ctx context.Context, method, spath string, body io.Reader, queryParam *map[string]string) (*http.Response, error) {
+	req, err := c.newRequest(ctx, method, spath, body, queryParam)
+	c.Logger.Printf("Request:  %s \n", httpRequestLog(req))
+	if err != nil {
+		c.Logger.Printf("err: %#v \n", err)
+		return nil, err
+	}
+
+	res, err := c.HTTPClient.Do(req)
+	c.Logger.Printf("Response: %s \n", httpResponseLog(res))
+	if err != nil {
+		c.Logger.Printf("err: %#v \n", err)
+		return nil, err
+	}
+
+	if res.StatusCode != 200 {
+		c.Logger.Printf("err: %#v \n", err)
+		return nil, fmt.Errorf("faild to get data. status: %s", res.Status)
+	}
+	return res, nil
+}
+
 func decodeBody(resp *http.Response, out interface{}) error {
 	defer resp.Body.Close()
 	decoder := json.NewDecoder(resp.Body)
 	return decoder.Decode(out)
 }
 
-func responseBodyToString(resp *http.Response) string {
-	b, err := ioutil.ReadAll(resp.Body)
-	if err == nil {
-		return string(b)
-	}
-	return ""
+func httpResponseLog(resp *http.Response) string {
+	b, _ := httputil.DumpResponse(resp, true)
+	return string(b)
+}
+func httpRequestLog(req *http.Request) string {
+	b, _ := httputil.DumpRequest(req, true)
+	return string(b)
 }

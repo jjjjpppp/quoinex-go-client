@@ -29,7 +29,7 @@ func TestCreateALoanBid(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{currency: "USD", quantity: "50", rate: "0.0002", jsonResponse: testutil.GetCreateLoanBidJsonResponse()},
-			expect: Expect{path: "/loan_bids", method: "POST", body: "currency=USD&quantity=50&rate=0.0002", loanBid: testutil.GetExpectedCreateLoanBidModel()},
+			expect: Expect{path: "/loan_bids", method: "POST", body: testutil.GetExpectedCreateALoanBidRequestBody(), loanBid: testutil.GetExpectedCreateLoanBidModel()},
 		},
 		// test case 2
 	}
@@ -186,7 +186,7 @@ func TestUpdateALoan(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{loanID: 144825, fundReloaned: false, jsonResponse: testutil.GetUpdateALoanJsonResponse()},
-			expect: Expect{path: "/loans/144825", method: "PUT", body: "fund_reloaned=false", loan: testutil.GetExpectedUpdateALoanModel()},
+			expect: Expect{path: "/loans/144825", method: "PUT", body: testutil.GetExpectedUpdateLoanBidRequestBody(), loan: testutil.GetExpectedUpdateALoanModel()},
 		},
 		// test case 2
 	}

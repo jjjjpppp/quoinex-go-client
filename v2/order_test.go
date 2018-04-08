@@ -111,7 +111,7 @@ func TestCreateAnOrder(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{orderType: "limit", productID: 1, side: "sell", quantity: "0.01", price: "500.0", priceRange: "", jsonResponse: testutil.GetCreateAnOrderJsonResponse()},
-			expect: Expect{path: "/orders", body: "order_type=limit&price=500.0&price_range=&product_id=1&quantity=0.01&side=sell", method: "POST", a: testutil.GetExpectedCreateAnOrderModel()},
+			expect: Expect{path: "/orders/", body: testutil.GetExpectedCreateAnOrderRequestBody(), method: "POST", a: testutil.GetExpectedCreateAnOrderModel()},
 		},
 		// test case 2
 	}
@@ -192,7 +192,7 @@ func TestEditALiveOrder(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{orderID: 2157474, quantity: "0.02", price: "520.0", jsonResponse: testutil.GetEditALiveOrderJsonResponse()},
-			expect: Expect{path: "/orders/2157474", method: "PUT", body: "price=520.0&quantity=0.02", order: testutil.GetExpectedEditALiveOrderModel()},
+			expect: Expect{path: "/orders/2157474", method: "PUT", body: testutil.GetExpectedEditALiveOrderRequestBody(), order: testutil.GetExpectedEditALiveOrderModel()},
 		},
 		// test case 2
 	}

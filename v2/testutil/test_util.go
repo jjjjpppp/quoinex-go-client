@@ -343,6 +343,19 @@ func GetCreateAnOrderJsonResponse() string {
   }`
 }
 
+func GetExpectedCreateAnOrderRequestBody() string {
+	return `{
+			"order": {
+				"order_type":"limit",
+				"product_id":1,
+				"side":"sell",
+				"quantity":"0.01",
+				"price":"500.0",
+				"price_range":""
+			}
+		}`
+}
+
 func GetExpectedCreateAnOrderModel() *models.Order {
 	return &models.Order{
 		ID:                   2157474,
@@ -485,6 +498,15 @@ func GetEditALiveOrderJsonResponse() string {
     "funding_currency": "USD",
     "currency_pair_code": "BTCUSD"
   }`
+}
+
+func GetExpectedEditALiveOrderRequestBody() string {
+	return `{
+			"order": {
+				"quantity":"0.02",
+				"price":"520.0",
+			}
+		}`
 }
 
 func GetExpectedEditALiveOrderModel() *models.Order {
@@ -725,6 +747,16 @@ func GetCreateLoanBidJsonResponse() string {
   }`
 }
 
+func GetExpectedCreateALoanBidRequestBody() string {
+	return `{
+			"loan_bid": {
+				"quantity":"50",
+				"currency":"USD",
+				"rate":"0.0002"
+			}
+		}`
+}
+
 func GetExpectedCreateLoanBidModel() *models.LoanBid {
 	return &models.LoanBid{
 		ID:             3580,
@@ -849,6 +881,14 @@ func GetUpdateALoanJsonResponse() string {
     "currency": "JPY",
     "fund_reloaned": false
   }`
+}
+
+func GetExpectedUpdateLoanBidRequestBody() string {
+	return `{
+			"loan": {
+				"fund_reloaned":false
+			}
+		}`
 }
 
 func GetExpectedUpdateALoanModel() *models.Loan {
@@ -988,6 +1028,14 @@ func GetUpdateLeverageLevelJsonResponse() string {
   }`
 }
 
+func GetExpectedUpdateLeverageLevelRequestBody() string {
+	return `{
+			"trading_account": {
+				"leverage_level":25
+			}
+		}`
+}
+
 func GetExpectedUpdateLeverageLevel() *models.TradingAccount {
 	return &models.TradingAccount{
 		ID:               1759,
@@ -1104,6 +1152,10 @@ func GetCloseTradeJsonResponse() string {
   }`
 }
 
+func GetExpectedCloseTradeRequestBody() string {
+	return `{"closed_quantity":0.000100}`
+}
+
 func GetExpectedCloseTradeModel() *models.Trade {
 	return &models.Trade{
 		ID:               57896,
@@ -1217,6 +1269,15 @@ func GetUpdateTradeJsonResponse() string {
     "updated_at": 1456251837,
     "total_interest": "0.02"
   }`
+}
+
+func GetExpectedUpdateTradeRequestBody() string {
+	return `{
+			"trade": {
+				"stop_loss":"300",
+				"take_profit":"600"
+			}
+		}`
 }
 
 func GetExpectedUpdateTradeModel() *models.Trade {
