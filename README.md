@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/jjjjpppp/quoinex-go-client/tree/master.svg?style=svg)](https://circleci.com/gh/jjjjpppp/quoinex-go-client/tree/master)
+
 # quoinex-go-client
 
 quoinex-go-client is a [go](https://golang.org/) client library for [Quoine v2 API](https://developers.quoine.com/).
