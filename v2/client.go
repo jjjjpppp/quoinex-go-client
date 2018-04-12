@@ -70,9 +70,19 @@ func (c *Client) GetInterestRates(ctx context.Context, currency string) (*models
 	return &interestRates, nil
 }
 
-func (c *Client) GetOrderBook(ctx context.Context, productID int) (*models.PriceLevels, error) {
+func (c *Client) GetOrderBook(ctx context.Context, productID int, full bool) (*models.PriceLevels, error) {
 	spath := fmt.Sprintf("/products/%d/price_levels", productID)
-	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
+
+	var queryParam *map[string]string
+	if full {
+		queryParam = &map[string]string{
+			"full": "1",
+		}
+	} else {
+		queryParam = nil
+	}
+
+	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
 	if err != nil {
 		return nil, err
 	}
