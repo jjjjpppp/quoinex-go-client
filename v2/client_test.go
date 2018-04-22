@@ -201,6 +201,7 @@ func TestGetProduct(t *testing.T) {
 func TestGetOrderBook(t *testing.T) {
 	type Param struct {
 		productID    int
+		full         bool
 		jsonResponse string
 	}
 	type Expect struct {
@@ -216,8 +217,8 @@ func TestGetOrderBook(t *testing.T) {
 	}{
 		// test case 1
 		{
-			param:  Param{productID: 1, jsonResponse: testutil.GetOrderBookJsonResponse()},
-			expect: Expect{path: "/products/1/price_levels", method: "GET", body: "", priceLevels: testutil.GetExpectedOrderBookModel()},
+			param:  Param{productID: 1, full: true, jsonResponse: testutil.GetOrderBookJsonResponse()},
+			expect: Expect{path: "/products/1/price_levels?full=1", method: "GET", body: "", priceLevels: testutil.GetExpectedOrderBookModel()},
 		},
 		// test case 2
 	}
@@ -229,7 +230,7 @@ func TestGetOrderBook(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		priceLevels, err := client.GetOrderBook(ctx, c.param.productID)
+		priceLevels, err := client.GetOrderBook(ctx, c.param.productID, true)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
