@@ -18,7 +18,7 @@ package main
 
 import (
  "fmt"
- "github.com/jjjjpppp/quoinex-go-client"
+ "github.com/jjjjpppp/quoinex-go-client/v2"
 )
 
 
