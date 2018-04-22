@@ -3,7 +3,7 @@
 # quoinex-go-client
 
 quoinex-go-client is a [go](https://golang.org/) client library for [Quoine v2 API](https://developers.quoine.com/).
-[godoc]()
+[godoc](https://godoc.org/github.com/jjjjpppp/quoinex-go-client/v2)
 
 ## Installation
 
