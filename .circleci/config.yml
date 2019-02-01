@@ -79,4 +79,6 @@ workflows:
           requires:
             - build
       - create_image
+          requires:
+            - lint
 
