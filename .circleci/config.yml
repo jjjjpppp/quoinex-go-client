@@ -4,10 +4,9 @@
 version: 2
 jobs:
   build:
-    machine: true
-    # docker:
+    docker:
       # specify the version
-      # - image: circleci/golang:1.11.5
+      - image: circleci/golang:1.11.5
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
@@ -36,9 +35,8 @@ jobs:
           paths:
             - .
   lint:
-    machine: true
-    # docker:
-    # - image: circleci/golang:1.11.5
+    docker:
+      - image: circleci/golang:1.11.5
     working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
     steps:
       - attach_workspace:
