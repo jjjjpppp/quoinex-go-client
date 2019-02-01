@@ -29,9 +29,10 @@ jobs:
     steps:
       - checkout
       - run: printenv
+      - run: go get -u golang.org/x/lint/golint
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep ensure
-      - run: go get -u golang.org/x/lint/golint
+      - run: golint v2
 workflows:
   version: 2
   test_and_lint:
