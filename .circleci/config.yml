@@ -30,15 +30,17 @@ jobs:
           key: go-libraries-{{ checksum "Gopkg.lock" }}
           paths:
             - guoinex-go-client/vendor/
+      - persist_to_workspace:
+          root: .
+          paths:
+            - .
   lint:
     docker:
       - image: circleci/golang:1.11.5
     working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
     steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - go-libraries-{{ checksum "Gopkg.lock" }}
+      - attach_workspace:
+          at: .
       - run: go get -u golang.org/x/lint/golint
       - run: printenv
       - run: golint v2
