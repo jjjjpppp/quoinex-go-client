@@ -26,6 +26,7 @@ jobs:
   lint:
     docker:
       - image: circleci/golang:1.11.5
+    working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
     steps:
       - checkout
       - run: printenv
