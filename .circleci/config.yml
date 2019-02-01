@@ -76,9 +76,7 @@ workflows:
               only: master
       - lint:
           context: org-global
-          filters:
-            branches:
-              only: master
           requires:
             - build
+      - create_image
 
