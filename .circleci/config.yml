@@ -21,8 +21,14 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: printenv
       - run: go get -u github.com/golang/dep/cmd/dep
+      - run: go get -u golang.org/x/lint/golint
       - run: dep ensure
       - run: go test -v ./...
+      - save_cache:
+          key: go-libraries-{{ checksum "Gopkg.lock" }}
+          paths:
+            - /go/bin
+            - /go/src/github.com/jjjjpppp/guoinex-go-client/vendor
   lint:
     docker:
       - image: circleci/golang:1.11.5
@@ -30,9 +36,6 @@ jobs:
     steps:
       - checkout
       - run: printenv
-      - run: go get -u golang.org/x/lint/golint
-      - run: go get -u github.com/golang/dep/cmd/dep
-      - run: dep ensure
       - run: golint v2
 workflows:
   version: 2
