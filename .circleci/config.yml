@@ -44,6 +44,27 @@ jobs:
       - run: go get -u golang.org/x/lint/golint
       - run: printenv
       - run: golint v2
+  create_image:
+    docker:
+      - image: circleci/golang:1.11.5
+    working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
+    steps:
+      - attach_workspace:
+          at: .
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Install Docker client
+          command: |
+            set -x
+            VER="17.03.0-ce"
+            curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
+            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+            mv /tmp/docker/* /usr/bin
+      - run: |
+          TAG=0.1.$CIRCLE_BUILD_NUM
+          docker build -t   CircleCI-Public/circleci-demo-docker:$TAG .
+
 workflows:
   version: 2
   test_and_lint:
