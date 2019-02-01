@@ -78,7 +78,7 @@ workflows:
           context: org-global
           requires:
             - build
-      - create_image
+      - create_image:
           requires:
             - lint
 
