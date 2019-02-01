@@ -4,6 +4,7 @@
 version: 2
 jobs:
   build:
+    machine: true
     docker:
       # specify the version
       - image: circleci/golang:1.11.5
@@ -35,6 +36,7 @@ jobs:
           paths:
             - .
   lint:
+    machine: true
     docker:
       - image: circleci/golang:1.11.5
     working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
