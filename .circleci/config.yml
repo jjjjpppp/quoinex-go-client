@@ -27,8 +27,8 @@ jobs:
       - save_cache:
           key: go-libraries-{{ checksum "Gopkg.lock" }}
           paths:
-            - /go/bin
-            - guoinex-go-client/vendor
+            - /go/bin/
+            - guoinex-go-client/vendor/
   lint:
     docker:
       - image: circleci/golang:1.11.5
