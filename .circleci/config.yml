@@ -21,13 +21,11 @@ jobs:
       # specify any bash command here prefixed with `run: `
       - run: printenv
       - run: go get -u github.com/golang/dep/cmd/dep
-      - run: go get -u golang.org/x/lint/golint
       - run: dep ensure
       - run: go test -v ./...
       - save_cache:
           key: go-libraries-{{ checksum "Gopkg.lock" }}
           paths:
-            - /go/bin/
             - guoinex-go-client/vendor/
   lint:
     docker:
@@ -38,6 +36,7 @@ jobs:
       - restore_cache:
           keys:
             - go-libraries-{{ checksum "Gopkg.lock" }}
+      - run: go get -u golang.org/x/lint/golint
       - run: printenv
       - run: golint v2
 workflows:
