@@ -32,18 +32,17 @@ jobs:
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep ensure
       - run: go get -u golang.org/x/lint/golint
-
 workflows:
   version: 2
   test_and_lint:
     jobs:
-      - build
-        context: ISHI_KEY
-        filters:
-          branches:
-            only: master
-      - lint
-        context: ISHI_KEY
-        filters:
-          branches:
-            only: master
+      - build:
+          context: org-global
+          filters:
+            branches:
+              only: master
+      - lint:
+          context: org-global
+          filters:
+            branches:
+              only: master
