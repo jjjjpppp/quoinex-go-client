@@ -2,9 +2,13 @@ version: 2.1
 
 executors:
    default:
+     parameters:
+       go_version:
+         type: enum
+         enum: ['1.11.4', '1.11.5']
      working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
      docker:
-       - image: circleci/golang:1.11.5
+       - image: circleci/golang:<< parameters.go_version >>
 
 commands:
   restore_go_libraries:
@@ -24,6 +28,7 @@ jobs:
   build:
     executor:
       name: default
+      go_version: 1.11.5
     steps:
       - checkout
       - restore_go_libraries
@@ -39,6 +44,7 @@ jobs:
   lint:
     executor:
       name: default
+      go_version: 1.11.5
     steps:
       - attach_workspace:
           at: .
@@ -48,6 +54,7 @@ jobs:
   create_image:
     executor:
       name: default
+      go_version: 1.11.5
     steps:
       - attach_workspace:
           at: .
@@ -64,7 +71,7 @@ jobs:
             mv /tmp/docker/* ~/bin
             export PATH="~/bin:$PATH"
       - run: |
-          TAG=0.1.${CIRCLE_BUILD_NUM}
+          TAG=0.1.$CIRCLE_BUILD_NUM
           docker build -t   jjjjpppp/circleci-demo-docker:$TAG .
 
 workflows:
