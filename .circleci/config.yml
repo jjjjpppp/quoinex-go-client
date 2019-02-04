@@ -1,9 +1,24 @@
 version: 2.1
+
 executors:
    default:
      working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
      docker:
        - image: circleci/golang:1.11.5
+
+commands:
+  restore_go_libraries:
+    steps:
+      - restore_cache:
+          keys:
+            - go-libraries-{{ checksum "Gopkg.lock" }}
+
+  save_go_libraries:
+    steps:
+      - save_cache:
+          key: go-libraries-{{ checksum "Gopkg.lock" }}
+          paths:
+            - guoinex-go-client/vendor/
 
 jobs:
   build:
@@ -11,18 +26,12 @@ jobs:
       name: default
     steps:
       - checkout
-      # specify any bash command here prefixed with `run: `
-      - restore_cache:
-          keys:
-            - go-libraries-{{ checksum "Gopkg.lock" }}
+      - restore_go_libraries
       - run: printenv
       - run: go get -u github.com/golang/dep/cmd/dep
       - run: dep ensure
       - run: go test -v ./...
-      - save_cache:
-          key: go-libraries-{{ checksum "Gopkg.lock" }}
-          paths:
-            - guoinex-go-client/vendor/
+      - save_go_libraries
       - persist_to_workspace:
           root: .
           paths:
