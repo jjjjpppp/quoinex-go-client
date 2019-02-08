@@ -87,8 +87,11 @@ workflows:
           context: org-global
           requires:
             - build
-      - create_image:
+      - hold:
           type: approval
           requires:
             - lint
+      - create_image:
+          requires:
+            - hold
 
