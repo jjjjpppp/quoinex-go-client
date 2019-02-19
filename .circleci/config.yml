@@ -82,9 +82,6 @@ workflows:
         # type: approval
       - build:
           context: org-global
-          filters:
-            branches:
-              only: master
       # requires:
           # - request-build
       - lint:
