@@ -78,17 +78,19 @@ workflows:
   version: 2
   test_and_lint:
     jobs:
-      - request-build:
-          type: approval
+      # - request-build:
+        # type: approval
       - build:
           filters:
             branches:
               only: master
-          requires:
-            - request-build
+      # requires:
+          # - request-build
       - lint:
           requires:
             - build
       - create_image:
           requires:
             - lint
+
+
