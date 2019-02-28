@@ -81,14 +81,12 @@ workflows:
       - request-build:
           type: approval
       - build:
-          context: org-global
           filters:
             branches:
               only: master
           requires:
             - request-build
       - lint:
-          context: org-global
           requires:
             - build
       - create_image:
