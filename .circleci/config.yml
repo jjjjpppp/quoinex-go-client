@@ -66,13 +66,16 @@ workflows:
   test_and_lint:
     jobs:
     - build:
+        context: org-global
         filters:
           branches:
             only: master
     - lint:
+        context: org-global
         requires:
         - build
     - create_image:
+        context: org-global
         requires:
         - lint
 
