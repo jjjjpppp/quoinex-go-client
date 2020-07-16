@@ -17,13 +17,14 @@ go get github.com/jjjjpppp/quoinex-go-client
 package main
 
 import (
- "fmt"
+ "time"
+ "context"
  "github.com/jjjjpppp/quoinex-go-client/v2"
 )
 
 
 func main() {
-  client, _ := NewClient("apiTokenID", "secret", nil) // your token and secret setup here
+  client, _ := quoinex.NewClient("apiTokenID", "secret", nil) // your token and secret setup here
   ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
   priceLevels, err := client.GetOrderBook(ctx,[productID])
 
