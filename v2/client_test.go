@@ -89,12 +89,12 @@ func TestNewRequest(t *testing.T) {
 		// test case 1
 		{
 			param:  Param{method: "GET", spath: "product/1", queryParam: nil},
-			expect: Expect{method: "GET", url: "https://api.quoine.com/product/1"},
+			expect: Expect{method: "GET", url: "https://api.liquid.com/product/1"},
 		},
 		// test case 2
 		{
 			param:  Param{method: "GET", spath: "product/1", queryParam: &map[string]string{"product_id": "1", "limit": "1", "page": "1"}},
-			expect: Expect{method: "GET", url: "https://api.quoine.com/product/1?limit=1&page=1&product_id=1"},
+			expect: Expect{method: "GET", url: "https://api.liquid.com/product/1?limit=1&page=1&product_id=1"},
 		},
 	}
 
@@ -221,6 +221,10 @@ func TestGetOrderBook(t *testing.T) {
 			expect: Expect{path: "/products/1/price_levels?full=1", method: "GET", body: "", priceLevels: testutil.GetExpectedOrderBookModel()},
 		},
 		// test case 2
+		{
+			param:  Param{productID: 1, full: false, jsonResponse: testutil.GetOrderBookJsonResponse()},
+			expect: Expect{path: "/products/1/price_levels", method: "GET", body: "", priceLevels: testutil.GetExpectedOrderBookModel()},
+		},
 	}
 	for _, c := range cases {
 		ts := testutil.GenerateTestServer(t, c.expect.path, c.expect.method, c.expect.body, c.param.jsonResponse)
@@ -230,7 +234,7 @@ func TestGetOrderBook(t *testing.T) {
 		client.testServer = ts
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
-		priceLevels, err := client.GetOrderBook(ctx, c.param.productID, true)
+		priceLevels, err := client.GetOrderBook(ctx, c.param.productID, c.param.full)
 		if err != nil {
 			t.Errorf("Error. %+v", err)
 		}
