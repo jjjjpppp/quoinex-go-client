@@ -54,7 +54,7 @@ func (c *Client) GetCryptoAccounts(ctx context.Context) ([]*models.CryptoAccount
 }
 
 func (c *Client) GetAllAccountBalances(ctx context.Context) ([]*models.AccountBalance, error) {
-	spath := fmt.Sprintf("/accounts/balance")
+	spath := "/accounts/balance"
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err

@@ -9,7 +9,7 @@ import (
 )
 
 func (c *Client) CreateALoanBid(ctx context.Context, quantity, currency, rate string) (*models.LoanBid, error) {
-	spath := fmt.Sprintf("/loan_bids")
+	spath := "/loan_bids"
 	bodyTemplate :=
 		`{
 			"loan_bid": {
@@ -33,7 +33,7 @@ func (c *Client) CreateALoanBid(ctx context.Context, quantity, currency, rate st
 }
 
 func (c *Client) GetLoanBids(ctx context.Context, currency string) (*models.LoanBids, error) {
-	spath := fmt.Sprintf("/loan_bids")
+	spath := "/loan_bids"
 	queryParam := &map[string]string{
 		"currency": currency}
 	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
@@ -65,7 +65,7 @@ func (c *Client) CloseLoanBid(ctx context.Context, loanBidID int) (*models.LoanB
 }
 
 func (c *Client) GetLoans(ctx context.Context, currency string) (*models.Loans, error) {
-	spath := fmt.Sprintf("/loans")
+	spath := "/loans"
 	queryParam := &map[string]string{
 		"currency": currency}
 	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
