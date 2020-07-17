@@ -9,7 +9,7 @@ import (
 
 func (c *Client) GetTrades(ctx context.Context, fundingCurrency, status string) (*models.Trades, error) {
 	spath := "/trades"
-	queryParam := &map[string]string{
+	queryParam := &map[string]string0{
 		"funding_currency": fundingCurrency,
 		"status":           status}
 	res, err := c.sendRequest(ctx, "GET", spath, nil, queryParam)
