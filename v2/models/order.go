@@ -24,7 +24,7 @@ type Order struct {
 	ProductCode          string          `json:"product_code"`
 	FundingCurrency      string          `json:"funding_currency"`
 	CurrencyPairCode     string          `json:"currency_pair_code"`
-	OrderFee             string          `json:"order_fee"`
+	OrderFee             float64         `json:"order_fee"`
 	Executions           OrderExecutions `json:"executions"`
 }
 

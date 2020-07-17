@@ -58,7 +58,7 @@ func GetOrderJsonResponse() string {
   	"product_code": "CASH",
   	"funding_currency": "USD",
   	"currency_pair_code": "BTCUSD",
-  	"order_fee": "0.0",
+  	"order_fee": 0.0,
   	"executions": [
   	  {
   	    "id": 4566133,
@@ -150,7 +150,7 @@ func GetExpectedOrderModel() *models.Order {
 		ProductCode:          "CASH",
 		FundingCurrency:      "USD",
 		CurrencyPairCode:     "BTCUSD",
-		OrderFee:             "0.0",
+		OrderFee:             0.0,
 		Executions: models.OrderExecutions{
 			{
 				ID:        4566133,
@@ -338,7 +338,7 @@ func GetCreateAnOrderJsonResponse() string {
     "product_code": "CASH",
     "funding_currency": "USD",
     "currency_pair_code": "BTCUSD",
-    "order_fee": "0.0"
+    "order_fee": 0.0
   }`
 }
 
@@ -374,7 +374,7 @@ func GetExpectedCreateAnOrderModel() *models.Order {
 		ProductCode:          "CASH",
 		FundingCurrency:      "USD",
 		CurrencyPairCode:     "BTCUSD",
-		OrderFee:             "0.0",
+		OrderFee:             0.0,
 	}
 }
 
@@ -399,7 +399,7 @@ func GetOrdersJsonResponse() string {
         "product_code": "CASH",
         "funding_currency": "USD",
         "currency_pair_code": "BTCUSD",
-        "order_fee": "0.0",
+        "order_fee": 0.0,
         "executions": []
       }
     ],
@@ -427,7 +427,7 @@ func GetExpectedOrdersModel() *models.Orders {
 		ProductCode:          "CASH",
 		FundingCurrency:      "USD",
 		CurrencyPairCode:     "BTCUSD",
-		OrderFee:             "0.0",
+		OrderFee:             0.0,
 		Executions:           models.OrderExecutions{},
 	}
 	return &models.Orders{Models: []*models.Order{model1}, CurrentPage: 1, TotalPages: 1}
