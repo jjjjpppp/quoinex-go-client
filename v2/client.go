@@ -151,7 +151,7 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	userAgent := fmt.Sprintf("GoClient/%s (%s)", version, runtime.Version())
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"path":     spath,
-		"nonce":    time.Now().Format("20060102150405000000000"),
+		"nonce":    time.Now().UnixNano(),
 		"token_id": c.ApiTokenID,
 	})
 
