@@ -34,8 +34,7 @@ func GenerateTestServer(t *testing.T, expectPath string, expectMethod string, ex
 
 			// set expected json
 			w.Header().Set("content-Type", "text")
-			fmt.Fprintf(w, jsonResponse)
-			return
+			fmt.Fprint(w, jsonResponse)
 		},
 	))
 }

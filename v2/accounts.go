@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Client) GetFiatAccounts(ctx context.Context) ([]*models.Account, error) {
-	spath := fmt.Sprintf("/fiat_accounts")
+	spath := "/fiat_accounts"
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func (c *Client) GetFiatAccounts(ctx context.Context) ([]*models.Account, error)
 }
 
 func (c *Client) CreateAFiatAccount(ctx context.Context, currency string) (*models.Account, error) {
-	spath := fmt.Sprintf("/fiat_accounts")
+	spath := "/fiat_accounts"
 	body := fmt.Sprintf("{\"currency\":\"%s\"}", currency)
 	res, err := c.sendRequest(ctx, "POST", spath, strings.NewReader(body), nil)
 	if err != nil {
@@ -39,7 +39,7 @@ func (c *Client) CreateAFiatAccount(ctx context.Context, currency string) (*mode
 }
 
 func (c *Client) GetCryptoAccounts(ctx context.Context) ([]*models.CryptoAccount, error) {
-	spath := fmt.Sprintf("/crypto_accounts")
+	spath := "/crypto_accounts"
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
