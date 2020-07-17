@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Client) GetTradingAccounts(ctx context.Context) ([]*models.TradingAccount, error) {
-	spath := fmt.Sprintf("/trading_accounts")
+	spath := "/trading_accounts"
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
