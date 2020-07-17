@@ -96,7 +96,7 @@ func (c *Client) GetOrderBook(ctx context.Context, productID int, full bool) (*m
 }
 
 func (c *Client) GetProducts(ctx context.Context) ([]*models.Product, error) {
-	spath := fmt.Sprintf("/products")
+	spath := "/products"
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
 		return nil, err
