@@ -1,24 +1,20 @@
-version: 2
+version: 2.1
 jobs:
   build:
     working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
     docker:
-    - image: circleci/golang:1.11.5
+    - image: circleci/golang:1.13.8
     steps:
     - checkout
     - restore_cache:
         keys:
-        - go-libraries-{{ checksum "Gopkg.lock" }}
+        - go-libraries-{{ checksum "go.sum" }}
     - run:
         command: printenv
     - run:
-        command: go get -u github.com/golang/dep/cmd/dep
-    - run:
-        command: dep ensure
-    - run:
         command: go test -v ./...
     - save_cache:
-        key: go-libraries-{{ checksum "Gopkg.lock" }}
+        key: go-libraries-{{ checksum "go.sum" }}
         paths:
         - guoinex-go-client/vendor/
     - persist_to_workspace:
@@ -38,29 +34,7 @@ jobs:
         command: printenv
     - run:
         command: golint v2
-  create_image:
-    working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
-    docker:
-    - image: circleci/golang:1.11.5
-    steps:
-    - attach_workspace:
-        at: .
-    - setup_remote_docker:
-        docker_layer_caching: true
-    - run:
-        name: Install Docker client
-        command: |
-          set -x
-          VER="17.03.0-ce"
-          curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-          tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-          mkdir ~/bin
-          mv /tmp/docker/* ~/bin
-          export PATH="~/bin:$PATH"
-    - run:
-        command: |
-          TAG=0.1.$CIRCLE_BUILD_NUM
-          docker build -t   jjjjpppp/circleci-demo-docker:$TAG .
+
 workflows:
   version: 2
   test_and_lint:
@@ -74,104 +48,4 @@ workflows:
         context: org-global
         requires:
         - build
-    - create_image:
-        context: org-global
-        requires:
-        - lint
 
-# Original config.yml file:
-# version: 2.1
-# 
-# executors:
-#    default:
-#      parameters:
-#        go_version:
-#          type: enum
-#          enum: ['1.11.4', '1.11.5']
-#      working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
-#      docker:
-#        - image: circleci/golang:<< parameters.go_version >>
-# 
-# commands:
-#   restore_go_libraries:
-#     steps:
-#       - restore_cache:
-#           keys:
-#             - go-libraries-{{ checksum \"Gopkg.lock\" }}
-# 
-#   save_go_libraries:
-#     steps:
-#       - save_cache:
-#           key: go-libraries-{{ checksum \"Gopkg.lock\" }}
-#           paths:
-#             - guoinex-go-client/vendor/
-# 
-# jobs:
-#   build:
-#     executor:
-#       name: default
-#       go_version: 1.11.5
-#     steps:
-#       - checkout
-#       - restore_go_libraries
-#       - run: printenv
-#       - run: go get -u github.com/golang/dep/cmd/dep
-#       - run: dep ensure
-#       - run: go test -v ./...
-#       - save_go_libraries
-#       - persist_to_workspace:
-#           root: .
-#           paths:
-#             - .
-#   lint:
-#     executor:
-#       name: default
-#       go_version: 1.11.5
-#     steps:
-#       - attach_workspace:
-#           at: .
-#       - run: go get -u golang.org/x/lint/golint
-#       - run: printenv
-#       - run: golint v2
-#   create_image:
-#     executor:
-#       name: default
-#       go_version: 1.11.5
-#     steps:
-#       - attach_workspace:
-#           at: .
-#       - setup_remote_docker:
-#           docker_layer_caching: true
-#       - run:
-#           name: Install Docker client
-#           command: |
-#             set -x
-#             VER=\"17.03.0-ce\"
-#             curl -L -o /tmp/docker-$VER.tgz https://download.docker.com/linux/static/stable/x86_64/docker-$VER.tgz
-#             tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-#             mkdir ~/bin
-#             mv /tmp/docker/* ~/bin
-#             export PATH=\"~/bin:$PATH\"
-#       - run: |
-#           TAG=0.1.$CIRCLE_BUILD_NUM
-#           docker build -t   jjjjpppp/circleci-demo-docker:$TAG .
-# 
-# workflows:
-#   version: 2
-#   test_and_lint:
-#     jobs:
-#       # - request-build:
-#         # type: approval
-#       - build:
-#           filters:
-#             branches:
-#               only: master
-#       # requires:
-#           # - request-build
-#       - lint:
-#           requires:
-#             - build
-#       - create_image:
-#           requires:
-#             - lint
-#
