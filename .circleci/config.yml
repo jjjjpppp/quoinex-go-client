@@ -10,7 +10,7 @@ jobs:
         command: go mod download
     - run:
         command: go test -v ./...
-   - run:
+    - run:
         command: |
           set -x
           wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.24.0
