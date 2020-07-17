@@ -76,7 +76,7 @@ func GetProductsJsonResponse() string {
 	return `
 	[
     {
-        "id": "5",
+        "id": 5,
         "product_type": "CurrencyPair",
         "code": "CASH",
         "name": "CASH Trading",
@@ -105,7 +105,7 @@ func GetProductsJsonResponse() string {
 
 func GetProductJsonResponse() string {
 	return `{
-        "id": "5",
+        "id": 5,
         "product_type": "CurrencyPair",
         "code": "CASH",
         "name": "CASH Trading",
@@ -166,7 +166,7 @@ func GetExpectedOrderModel() *models.Order {
 
 func GetExpectedProductsModel() []*models.Product {
 	model := &models.Product{
-		ID:                  "5",
+		ID:                  5,
 		ProductType:         "CurrencyPair",
 		Code:                "CASH",
 		Name:                "CASH Trading",
@@ -195,7 +195,7 @@ func GetExpectedProductsModel() []*models.Product {
 
 func GetExpectedProductmodel() *models.Product {
 	return &models.Product{
-		ID:                  "5",
+		ID:                  5,
 		ProductType:         "CurrencyPair",
 		Code:                "CASH",
 		Name:                "CASH Trading",
