@@ -10,34 +10,18 @@ jobs:
         command: go mod download
     - run:
         command: go test -v ./...
-    - persist_to_workspace:
-        root: .
-        paths:
-        - .
-  lint:
-    working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
-    docker:
-    - image: circleci/golang:1.13.8
-    steps:
-    - attach_workspace:
-        at: .
-    - run:
+   - run:
         command: |
           set -x
           wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.24.0
-          golangci-lint run ./...
+          ./bin/golangci-lint run ./...
+
 
 workflows:
   version: 2
   test_and_lint:
     jobs:
     - build:
-        context: org-global
         filters:
           branches:
             only: master
-    - lint:
-        context: org-global
-        requires:
-        - build
-
