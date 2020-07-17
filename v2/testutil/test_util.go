@@ -3,11 +3,12 @@ package testutil
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 )
 
 func GenerateTestServer(t *testing.T, expectPath string, expectMethod string, expectBody string, jsonResponse string) *httptest.Server {
@@ -40,36 +41,38 @@ func GenerateTestServer(t *testing.T, expectPath string, expectMethod string, ex
 }
 
 func GetOrderJsonResponse() string {
-	return `{
-  	"id": 2157479,
-  	"order_type": "limit",
-  	"quantity": "0.01",
-  	"disc_quantity": "0.0",
-  	"iceberg_total_quantity": "0.0",
-  	"side": "sell",
-  	"filled_quantity": "0.01",
-  	"price": 500.0,
-  	"created_at": 1462123639,
-  	"updated_at": 1462123639,
-  	"status": "filled",
-  	"leverage_level": 2,
-  	"source_exchange": "QUOINE",
-  	"product_id": 1,
-  	"product_code": "CASH",
-  	"funding_currency": "USD",
-  	"currency_pair_code": "BTCUSD",
-  	"order_fee": 0.0,
-  	"executions": [
-  	  {
-  	    "id": 4566133,
-  	    "quantity": "0.01",
-  	    "price": 500.0,
-  	    "taker_side": "buy",
-  	    "my_side": "sell",
-  	    "created_at": 1465396785
-  	  }
-  	]
-	}`
+	return `
+{
+   "id":2914273073,
+   "order_type":"limit",
+   "quantity":"0.001",
+   "disc_quantity":"0.0",
+   "iceberg_total_quantity":"0.0",
+   "side":"buy",
+   "filled_quantity":"0.0",
+   "price":976382.0,
+   "created_at":1594964584,
+   "updated_at":1594964584,
+   "status":"live",
+   "leverage_level":1,
+   "source_exchange":"QUOINE",
+   "product_id":5,
+   "margin_type":null,
+   "take_profit":null,
+   "stop_loss":null,
+   "trading_type":"spot",
+   "product_code":"CASH",
+   "funding_currency":"JPY",
+   "crypto_account_id":null,
+   "currency_pair_code":"BTCJPY",
+   "average_price":0.0,
+   "target":"spot",
+   "order_fee":0.0,
+   "source_action":"manual",
+   "unwound_trade_id":null,
+   "trade_id":null,
+   "client_order_id":null
+}`
 }
 
 func GetProductsJsonResponse() string {
@@ -133,34 +136,35 @@ func GetProductJsonResponse() string {
 
 func GetExpectedOrderModel() *models.Order {
 	return &models.Order{
-		ID:                   2157479,
+		ID:                   2914273073,
 		OrderType:            "limit",
-		Quantity:             "0.01",
+		Quantity:             "0.001",
 		DiscQuantity:         "0.0",
 		IcebergTotalQuantity: "0.0",
-		Side:                 "sell",
-		FilledQuantity:       "0.01",
-		Price:                500.0,
-		CreatedAt:            1462123639,
-		UpdatedAt:            1462123639,
-		Status:               "filled",
-		LeverageLevel:        2,
+		Side:                 "buy",
+		FilledQuantity:       "0.0",
+		Price:                976382.0,
+		CreatedAt:            1594964584,
+		UpdatedAt:            1594964584,
+		Status:               "live",
+		LeverageLevel:        1,
 		SourceExchange:       "QUOINE",
-		ProductID:            1,
+		ProductID:            5,
+		MarginType:           nil,
+		TakeProfit:           nil,
+		StopLoss:             nil,
+		TradingType:          "spot",
 		ProductCode:          "CASH",
-		FundingCurrency:      "USD",
-		CurrencyPairCode:     "BTCUSD",
+		FundingCurrency:      "JPY",
+		CryptoAccountID:      nil,
+		CurrencyPairCode:     "BTCJPY",
+		AveragePrice:         0.0,
+		Target:               "spot",
 		OrderFee:             0.0,
-		Executions: models.OrderExecutions{
-			{
-				ID:        4566133,
-				Quantity:  "0.01",
-				Price:     500.0,
-				TakerSide: "buy",
-				MySide:    "sell",
-				CreatedAt: 1465396785,
-			},
-		},
+		SourceAction:         "manual",
+		UnwoundTradeID:       nil,
+		TradeID:              nil,
+		ClientOrderID:        nil,
 	}
 }
 
@@ -321,25 +325,36 @@ func GetExpectedInterestRatesModel() *models.InterestRates {
 
 func GetCreateAnOrderJsonResponse() string {
 	return `{
-    "id": 2157474,
-    "order_type": "limit",
-    "quantity": "0.01",
-    "disc_quantity": "0.0",
-    "iceberg_total_quantity": "0.0",
-    "side": "sell",
-    "filled_quantity": "0.0",
-    "price": 500.0,
-    "created_at": 1462123639,
-    "updated_at": 1462123639,
-    "status": "live",
-    "leverage_level": 1,
-    "source_exchange": "QUOINE",
-    "product_id": 1,
-    "product_code": "CASH",
-    "funding_currency": "USD",
-    "currency_pair_code": "BTCUSD",
-    "order_fee": 0.0
-  }`
+   "id":2914273073,
+   "order_type":"limit",
+   "quantity":"0.001",
+   "disc_quantity":"0.0",
+   "iceberg_total_quantity":"0.0",
+   "side":"buy",
+   "filled_quantity":"0.0",
+   "price":976382.0,
+   "created_at":1594964584,
+   "updated_at":1594964584,
+   "status":"live",
+   "leverage_level":1,
+   "source_exchange":"QUOINE",
+   "product_id":5,
+   "margin_type":null,
+   "take_profit":null,
+   "stop_loss":null,
+   "trading_type":"spot",
+   "product_code":"CASH",
+   "funding_currency":"JPY",
+   "crypto_account_id":null,
+   "currency_pair_code":"BTCJPY",
+   "average_price":0.0,
+   "target":"spot",
+   "order_fee":0.0,
+   "source_action":"manual",
+   "unwound_trade_id":null,
+   "trade_id":null,
+   "client_order_id":null
+}`
 }
 
 func GetExpectedCreateAnOrderRequestBody() string {
@@ -357,24 +372,35 @@ func GetExpectedCreateAnOrderRequestBody() string {
 
 func GetExpectedCreateAnOrderModel() *models.Order {
 	return &models.Order{
-		ID:                   2157474,
+		ID:                   2914273073,
 		OrderType:            "limit",
-		Quantity:             "0.01",
+		Quantity:             "0.001",
 		DiscQuantity:         "0.0",
 		IcebergTotalQuantity: "0.0",
-		Side:                 "sell",
+		Side:                 "buy",
 		FilledQuantity:       "0.0",
-		Price:                500.0,
-		CreatedAt:            1462123639,
-		UpdatedAt:            1462123639,
+		Price:                976382.0,
+		CreatedAt:            1594964584,
+		UpdatedAt:            1594964584,
 		Status:               "live",
 		LeverageLevel:        1,
 		SourceExchange:       "QUOINE",
-		ProductID:            1,
+		ProductID:            5,
+		MarginType:           nil,
+		TakeProfit:           nil,
+		StopLoss:             nil,
+		TradingType:          "spot",
 		ProductCode:          "CASH",
-		FundingCurrency:      "USD",
-		CurrencyPairCode:     "BTCUSD",
+		FundingCurrency:      "JPY",
+		CryptoAccountID:      nil,
+		CurrencyPairCode:     "BTCJPY",
+		AveragePrice:         0.0,
+		Target:               "spot",
 		OrderFee:             0.0,
+		SourceAction:         "manual",
+		UnwoundTradeID:       nil,
+		TradeID:              nil,
+		ClientOrderID:        nil,
 	}
 }
 
@@ -428,7 +454,6 @@ func GetExpectedOrdersModel() *models.Orders {
 		FundingCurrency:      "USD",
 		CurrencyPairCode:     "BTCUSD",
 		OrderFee:             0.0,
-		Executions:           models.OrderExecutions{},
 	}
 	return &models.Orders{Models: []*models.Order{model1}, CurrentPage: 1, TotalPages: 1}
 }
