@@ -14,7 +14,7 @@ type Order struct {
 	IcebergTotalQuantity string          `json:"iceberg_total_quantity"`
 	Side                 string          `json:"side"`
 	FilledQuantity       string          `json:"filled_quantity"`
-	Price                string          `json:"price"`
+	Price                float64         `json:"price"`
 	CreatedAt            uint            `json:"created_at"`
 	UpdatedAt            uint            `json:"updated_at"`
 	Status               string          `json:"status"`
@@ -31,7 +31,7 @@ type Order struct {
 type OrderExecutions []struct {
 	ID        uint64 `json:"id"`
 	Quantity  string `json:"quantity"`
-	Price     string `json:"price"`
+	Price     float64`json:"price"`
 	TakerSide string `json:"taker_side"`
 	MySide    string `json:"my_side"`
 	CreatedAt uint   `json:"created_at"`
