@@ -17,16 +17,15 @@ jobs:
   lint:
     working_directory: /go/src/github.com/jjjjpppp/quoinex-go-client
     docker:
-    - image: circleci/golang:1.11.5
+    - image: circleci/golang:1.13.8
     steps:
     - attach_workspace:
         at: .
     - run:
-        command: go get -u golang.org/x/lint/golint
-    - run:
-        command: printenv
-    - run:
-        command: golint v2
+        command: |
+          set -x
+          wget -O- -nv https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.24.0
+          golangci-lint run ./...
 
 workflows:
   version: 2
