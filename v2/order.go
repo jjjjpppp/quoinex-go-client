@@ -24,7 +24,7 @@ func (c *Client) GetAnOrder(ctx context.Context, orderID int) (*models.Order, er
 }
 
 func (c *Client) GetOrders(ctx context.Context, productID, withDetails int, fundingCurrency, status string) (*models.Orders, error) {
-	spath := fmt.Sprintf("/orders")
+	spath := "/orders"
 	queryParam := &map[string]string{
 		"product_id":       strconv.Itoa(productID),
 		"with_details":     strconv.Itoa(withDetails),
@@ -44,7 +44,7 @@ func (c *Client) GetOrders(ctx context.Context, productID, withDetails int, fund
 }
 
 func (c *Client) CreateAnOrder(ctx context.Context, orderType, side, quantity, price, priceRange string, productID int) (*models.Order, error) {
-	spath := fmt.Sprintf("/orders/")
+	spath := "/orders/"
 	bodyTemplate :=
 		`{
 			"order": {

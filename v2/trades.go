@@ -8,7 +8,7 @@ import (
 )
 
 func (c *Client) GetTrades(ctx context.Context, fundingCurrency, status string) (*models.Trades, error) {
-	spath := fmt.Sprintf("/trades")
+	spath := "/trades"
 	queryParam := &map[string]string{
 		"funding_currency": fundingCurrency,
 		"status":           status}
@@ -43,7 +43,7 @@ func (c *Client) CloseTrade(ctx context.Context, tradeID int, closedQuantity flo
 }
 
 func (c *Client) CloseAllTrade(ctx context.Context, side string) ([]*models.Trade, error) {
-	spath := fmt.Sprintf("/trades/close_all")
+	spath := "/trades/close_all"
 	bodyTemplate := `{"side":"%s"}`
 	body := fmt.Sprintf(bodyTemplate, side)
 	res, err := c.sendRequest(ctx, "PUT", spath, strings.NewReader(body), nil)
