@@ -4,8 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"io"
 	"io/ioutil"
 	"log"
@@ -15,6 +13,9 @@ import (
 	"net/url"
 	"runtime"
 	"time"
+
+	"github.com/dgrijalva/jwt-go"
+	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 )
 
 const (
@@ -150,7 +151,7 @@ func (c *Client) newRequest(ctx context.Context, method, spath string, body io.R
 	userAgent := fmt.Sprintf("GoClient/%s (%s)", version, runtime.Version())
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"path":     spath,
-		"nonce":    time.Now().Unix(),
+		"nonce":    time.Now().Format("20060102150405.000000000"),
 		"token_id": c.ApiTokenID,
 	})
 
