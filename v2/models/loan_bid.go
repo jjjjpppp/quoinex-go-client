@@ -1,7 +1,7 @@
 package models
 
 type LoanBid struct {
-	ID             int    `json:"id"`
+	ID             uint64 `json:"id"`
 	BidaskType     string `json:"bidask_type"`
 	Quantity       string `json:"quantity"`
 	Currency       string `json:"currency"`
@@ -9,7 +9,7 @@ type LoanBid struct {
 	FilledQuantity string `json:"filled_quantity"`
 	Status         string `json:"status"`
 	Rate           string `json:"rate"`
-	UserID         int    `json:"user_id"`
+	UserID         uint   `json:"user_id"`
 }
 
 type LoanBids struct {

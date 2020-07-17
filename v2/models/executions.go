@@ -7,10 +7,10 @@ type Executions struct {
 }
 
 type ExecutionsModels struct {
-	ID        int    `json:"id"`
+	ID        uint64 `json:"id"`
 	Quantity  string `json:"quantity"`
 	Price     string `json:"price"`
 	TakerSide string `json:"taker_side"`
 	MySide    string `json:"my_side"`
-	CreatedAt int    `json:"created_at"`
+	CreatedAt uint   `json:"created_at"`
 }

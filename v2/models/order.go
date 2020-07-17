@@ -7,7 +7,7 @@ type Orders struct {
 }
 
 type Order struct {
-	ID                   int             `json:"id"`
+	ID                   uint64          `json:"id"`
 	OrderType            string          `json:"order_type"`
 	Quantity             string          `json:"quantity"`
 	DiscQuantity         string          `json:"disc_quantity"`
@@ -15,12 +15,12 @@ type Order struct {
 	Side                 string          `json:"side"`
 	FilledQuantity       string          `json:"filled_quantity"`
 	Price                string          `json:"price"`
-	CreatedAt            int             `json:"created_at"`
-	UpdatedAt            int             `json:"updated_at"`
+	CreatedAt            uint            `json:"created_at"`
+	UpdatedAt            uint            `json:"updated_at"`
 	Status               string          `json:"status"`
-	LeverageLevel        int             `json:"leverage_level"`
+	LeverageLevel        uint            `json:"leverage_level"`
 	SourceExchange       string          `json:"source_exchange"`
-	ProductID            int             `json:"product_id"`
+	ProductID            uint            `json:"product_id"`
 	ProductCode          string          `json:"product_code"`
 	FundingCurrency      string          `json:"funding_currency"`
 	CurrencyPairCode     string          `json:"currency_pair_code"`
@@ -29,10 +29,10 @@ type Order struct {
 }
 
 type OrderExecutions []struct {
-	ID        int    `json:"id"`
+	ID        uint64 `json:"id"`
 	Quantity  string `json:"quantity"`
 	Price     string `json:"price"`
 	TakerSide string `json:"taker_side"`
 	MySide    string `json:"my_side"`
-	CreatedAt int    `json:"created_at"`
+	CreatedAt uint   `json:"created_at"`
 }

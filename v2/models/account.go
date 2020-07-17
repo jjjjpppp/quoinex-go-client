@@ -1,7 +1,7 @@
 package models
 
 type Account struct {
-	ID                       int    `json:"id"`
+	ID                       uint64 `json:"id"`
 	Currency                 string `json:"currency"`
 	CurrencySymbol           string `json:"currency_symbol"`
 	Balance                  string `json:"balance"`
