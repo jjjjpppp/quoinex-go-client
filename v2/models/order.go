@@ -31,7 +31,7 @@ type Order struct {
 	CurrencyPairCode     string      `json:"currency_pair_code"`
 	AveragePrice         float64     `json:"average_price"`
 	Target               string      `json:"target"`
-	OrderFee             float64     `json:"order_fee"`
+	OrderFee             interface{} `json:"order_fee"`
 	SourceAction         string      `json:"source_action"`
 	UnwoundTradeID       interface{} `json:"unwound_trade_id"`
 	TradeID              interface{} `json:"trade_id"`
