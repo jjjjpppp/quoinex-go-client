@@ -3,12 +3,13 @@ package quoinex
 import (
 	"context"
 	"fmt"
-	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"strconv"
 	"strings"
+
+	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 )
 
-func (c *Client) GetAnOrder(ctx context.Context, orderID int) (*models.Order, error) {
+func (c *Client) GetAnOrder(ctx context.Context, orderID uint64) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {
@@ -70,7 +71,7 @@ func (c *Client) CreateAnOrder(ctx context.Context, orderType, side, quantity, p
 	return &order, nil
 }
 
-func (c *Client) CancelAnOrder(ctx context.Context, orderID int) (*models.Order, error) {
+func (c *Client) CancelAnOrder(ctx context.Context, orderID uint64) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d/cancel", orderID)
 	res, err := c.sendRequest(ctx, "PUT", spath, nil, nil)
 	if err != nil {
@@ -85,7 +86,7 @@ func (c *Client) CancelAnOrder(ctx context.Context, orderID int) (*models.Order,
 	return &order, nil
 }
 
-func (c *Client) EditALiveOrder(ctx context.Context, orderID int, quantity, price string) (*models.Order, error) {
+func (c *Client) EditALiveOrder(ctx context.Context, orderID uint64, quantity, price string) (*models.Order, error) {
 	spath := fmt.Sprintf("/orders/%d", orderID)
 	bodyTemplate :=
 		`{
@@ -108,7 +109,7 @@ func (c *Client) EditALiveOrder(ctx context.Context, orderID int, quantity, pric
 	return &order, nil
 }
 
-func (c *Client) GetAnOrderTrades(ctx context.Context, orderID int) ([]*models.Trade, error) {
+func (c *Client) GetAnOrderTrades(ctx context.Context, orderID uint64) ([]*models.Trade, error) {
 	spath := fmt.Sprintf("/orders/%d/trades", orderID)
 	res, err := c.sendRequest(ctx, "GET", spath, nil, nil)
 	if err != nil {

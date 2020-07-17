@@ -2,11 +2,12 @@ package quoinex
 
 import (
 	"context"
+	"testing"
+	"time"
+
 	"github.com/google/go-cmp/cmp"
 	"github.com/jjjjpppp/quoinex-go-client/v2/models"
 	"github.com/jjjjpppp/quoinex-go-client/v2/testutil"
-	"testing"
-	"time"
 )
 
 func TestGetAnOrder(t *testing.T) {
@@ -136,7 +137,7 @@ func TestCreateAnOrder(t *testing.T) {
 
 func TestCancelAnOrder(t *testing.T) {
 	type Param struct {
-		orderID      int
+		orderID      uint64
 		jsonResponse string
 	}
 	type Expect struct {
@@ -174,7 +175,7 @@ func TestCancelAnOrder(t *testing.T) {
 
 func TestEditALiveOrder(t *testing.T) {
 	type Param struct {
-		orderID      int
+		orderID      uint64
 		quantity     string
 		price        string
 		jsonResponse string
