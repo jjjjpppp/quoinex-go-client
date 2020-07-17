@@ -6,17 +6,8 @@ jobs:
     - image: circleci/golang:1.13.8
     steps:
     - checkout
-    - restore_cache:
-        keys:
-        - go-libraries-{{ checksum "go.sum" }}
-    - run:
-        command: printenv
     - run:
         command: go test -v ./...
-    - save_cache:
-        key: go-libraries-{{ checksum "go.sum" }}
-        paths:
-        - guoinex-go-client/vendor/
     - persist_to_workspace:
         root: .
         paths:
